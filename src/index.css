@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Open Sans', sans-serif;
+  }
+  
+  body {
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Metallic Copper & Brand Gradients */
+.bg-copper-metallic {
+  background: linear-gradient(135deg, #c37b58 0%, #eab393 25%, #d18a66 50%, #a65835 75%, #eab393 100%);
+}
+
+.text-copper-metallic {
+  background: linear-gradient(135deg, #c37b58 0%, #eab393 30%, #d18a66 60%, #eab393 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-copper-metallic {
+  border-image: linear-gradient(135deg, #c37b58, #eab393, #a65835) 1;
+}
+
+.bg-berry-metallic {
+  background: linear-gradient(135deg, #92003a 0%, #b21b50 50%, #680027 100%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #18181b;
+}
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #92003a;
+}
+

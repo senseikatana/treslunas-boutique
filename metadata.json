@@ -1,0 +1,6 @@
+{
+  "name": "3 Lunas Boutique",
+  "description": "Boutique de moda femenina de alta costura y estilo celestial en Cambrils. Catálogo interactivo, carrito de compras, guía de marca y diseño, sobre nosotros y checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
