@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CartItem, ShippingDetails, PaymentMethod, Order, PageView } from '../types';
 import { StripeEmbeddedPayment } from '../components/StripeEmbeddedPayment';
+import { registerServerOrder, triggerMockWebhookEvent } from '../services/stripeApi';
 import { ShieldCheck, Lock, Truck, ShoppingBag } from 'lucide-react';
 
 interface CheckoutViewProps {
@@ -33,14 +34,16 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const handleStripeSuccess = (paymentId: string, methodDetails: string) => {
+  const handleStripeSuccess = async (paymentId: string, methodDetails: string) => {
     if (!formData.fullName || !formData.address || !formData.email) {
       setFormError('Por favor, rellenar los datos de envío antes de confirmar el pago.');
       return;
     }
 
+    const orderId = `3L-STRIPE-${Math.floor(100000 + Math.random() * 900000)}`;
+
     const newOrder: Order = {
-      id: `3L-STRIPE-${Math.floor(100000 + Math.random() * 900000)}`,
+      id: orderId,
       items: cartItems,
       shipping: formData,
       paymentMethod: 'card',
@@ -50,8 +53,23 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
       createdAt: new Date().toLocaleDateString('es-ES'),
       status: 'Confirmado'
     };
+
+    // Register order in backend server store
+    await registerServerOrder({
+      ...newOrder,
+      paymentIntentId: paymentId
+    });
+
+    // Trigger payment_intent.succeeded webhook confirmation
+    await triggerMockWebhookEvent({
+      paymentIntentId: paymentId,
+      orderId: orderId,
+      eventType: 'payment_intent.succeeded'
+    });
+
     onCompleteOrder(newOrder);
   };
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">

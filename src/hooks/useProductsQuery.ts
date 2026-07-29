@@ -1,12 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
-import { Product, Category } from '../types';
+import { Product } from '../types';
 import { PRODUCTS } from '../data/products';
+import { fetchProductsFromStripe } from '../services/stripeApi';
 
-// Async service simulator that returns products (can easily be tied to an Express API endpoint if expanded)
+// Programmatically fetch products from backend Stripe API or local boutique catalog
 export const fetchProducts = async (): Promise<Product[]> => {
-  // Simulate quick asynchronous network response
-  await new Promise((resolve) => setTimeout(resolve, 80));
-  return PRODUCTS;
+  try {
+    const data = await fetchProductsFromStripe();
+    if (data.products && data.products.length > 0) {
+      return data.products;
+    }
+    return PRODUCTS;
+  } catch (err) {
+    return PRODUCTS;
+  }
 };
 
 export const fetchProductById = async (id: string): Promise<Product | undefined> => {

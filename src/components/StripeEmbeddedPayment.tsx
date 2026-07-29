@@ -540,6 +540,20 @@ const StripeElementsInnerForm: React.FC<StripeEmbeddedPaymentProps> = ({
 
 // Wrapper with Elements Provider from @stripe/react-stripe-js
 export const StripeEmbeddedPayment: React.FC<StripeEmbeddedPaymentProps> = (props) => {
+  const existingElements = useElements();
+
+  if (existingElements) {
+    return (
+      <div className={`rounded-2xl border p-5 sm:p-6 shadow-sm transition-colors ${
+        props.isDarkMode 
+          ? 'bg-zinc-900/90 border-zinc-800 text-zinc-100' 
+          : 'bg-white border-zinc-200 text-zinc-900'
+      }`}>
+        <StripeElementsInnerForm {...props} />
+      </div>
+    );
+  }
+
   const options = {
     mode: 'payment' as const,
     amount: Math.max(100, Math.round(props.total * 100)),

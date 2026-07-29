@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { PageView } from '../types';
 import { TripleMoonLogo } from './TripleMoonLogo';
-import { Search, ShoppingBag, Menu, X, Sun, Moon, MapPin, ChevronDown, Sparkles, User } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, ChevronDown, Sparkles, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { ThemeDropdown, LanguageDropdown } from './ThemeLanguageDropdowns';
+import { LanguageCode } from '../i18n/translations';
 
 interface HeaderProps {
   currentView: PageView;
@@ -11,7 +14,10 @@ interface HeaderProps {
   onOpenSearch: () => void;
   onOpenCart: () => void;
   isDarkMode: boolean;
-  setIsDarkMode: (dark: boolean) => void;
+  themeMode: 'system' | 'light' | 'dark';
+  setThemeMode: (mode: 'system' | 'light' | 'dark') => void;
+  language: LanguageCode;
+  setLanguage: (lang: LanguageCode) => void;
   selectedCategory?: string;
   onSelectCategory?: (category: string) => void;
 }
@@ -23,7 +29,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSearch,
   onOpenCart,
   isDarkMode,
-  setIsDarkMode,
+  themeMode,
+  setThemeMode,
+  language,
+  setLanguage,
   selectedCategory = 'Todos',
   onSelectCategory
 }) => {
@@ -32,12 +41,14 @@ export const Header: React.FC<HeaderProps> = ({
   const [mobileCollectionOpen, setMobileCollectionOpen] = useState(true);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const { t } = useTranslation();
+
   const collectionSubCategories = [
-    { label: 'Ver Toda la Colección', category: 'Todos' },
-    { label: 'Vestidos', category: 'Vestidos' },
-    { label: 'Tops & Blusas', category: 'Tops & Blusas' },
-    { label: 'Accesorios', category: 'Accesorios' },
-    { label: 'Joyería', category: 'Joyería' },
+    { label: t('allCategories', 'Ver Toda la Colección'), category: 'Todos' },
+    { label: t('dresses', 'Vestidos'), category: 'Vestidos' },
+    { label: t('topsBlouses', 'Tops & Blusas'), category: 'Tops & Blusas' },
+    { label: t('accessories', 'Accesorios'), category: 'Accesorios' },
+    { label: t('jewelry', 'Joyería'), category: 'Joyería' },
   ];
 
   const handleNavClick = (view: PageView, category?: string) => {
@@ -65,8 +76,8 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className={`sticky top-0 z-40 transition-colors duration-300 border-b ${
       isDarkMode 
-        ? 'bg-[#0f0f10]/95 backdrop-blur-md border-zinc-800 text-zinc-100' 
-        : 'bg-[#faf8f6]/95 backdrop-blur-md border-zinc-200 text-zinc-900'
+        ? 'bg-zinc-950/95 backdrop-blur-md border-zinc-800 text-zinc-100' 
+        : 'bg-white/95 backdrop-blur-md border-slate-200 text-slate-900 shadow-xs'
     }`}>
       {/* Main Header Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -100,7 +111,7 @@ export const Header: React.FC<HeaderProps> = ({
                 currentView === 'home' ? 'text-[#c37b58] font-bold' : ''
               }`}
             >
-              Novedades
+              {t('newArrivals', 'Novedades')}
               {currentView === 'home' && (
                 <motion.div
                   layoutId="activeIndicator"
@@ -121,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
                   currentView === 'collection' ? 'text-[#c37b58] font-bold' : ''
                 }`}
               >
-                <span>Colección</span>
+                <span>{t('collection', 'Colección')}</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180 text-[#c37b58]' : ''}`} />
                 {currentView === 'collection' && (
                   <motion.div
@@ -191,7 +202,7 @@ export const Header: React.FC<HeaderProps> = ({
                 currentView === 'about' ? 'text-[#c37b58] font-bold' : ''
               }`}
             >
-              Sobre Erika
+              {t('aboutErika', 'Sobre Erika')}
               {currentView === 'about' && (
                 <motion.div
                   layoutId="activeIndicator"
@@ -207,7 +218,7 @@ export const Header: React.FC<HeaderProps> = ({
                 currentView === 'contact' ? 'text-[#c37b58] font-bold' : ''
               }`}
             >
-              Contacto
+              {t('contact', 'Contacto')}
               {currentView === 'contact' && (
                 <motion.div
                   layoutId="activeIndicator"
@@ -218,34 +229,36 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Right Icon Actions (Desktop View) */}
-          <div className="hidden lg:flex items-center space-x-3 sm:space-x-4">
+          <div className="hidden lg:flex items-center space-x-2.5 sm:space-x-3">
             {/* Search Button */}
             <button
               onClick={onOpenSearch}
-              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors text-zinc-800 dark:text-zinc-200"
-              title="Buscar en la boutique"
+              className="p-2 rounded-xl hover:bg-zinc-500/10 transition-colors text-zinc-800 dark:text-zinc-200"
+              title={t('search', "Buscar en la boutique")}
             >
               <Search className="w-5 h-5" />
             </button>
 
-            {/* Dark / Light Mode Toggle */}
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors text-amber-500"
-              title={isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
-            >
-              {isDarkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-zinc-800" />}
-            </button>
+            {/* Language Selector Dropdown */}
+            <LanguageDropdown
+              language={language}
+              setLanguage={setLanguage}
+              isDarkMode={isDarkMode}
+            />
+
+            {/* Theme Selector Dropdown (System, Light, Dark) */}
+            <ThemeDropdown
+              themeMode={themeMode}
+              setThemeMode={setThemeMode}
+              isDarkMode={isDarkMode}
+              language={language}
+            />
 
             {/* Shopping Bag Button */}
             <button
               onClick={onOpenCart}
-              style={{
-                paddingLeft: '8px',
-                marginLeft: '-12px',
-              }}
-              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors relative text-zinc-800 dark:text-zinc-200"
-              title="Ver Carrito de Compras"
+              className="p-2 rounded-xl hover:bg-zinc-500/10 transition-colors relative text-zinc-800 dark:text-zinc-200"
+              title={t('cart', "Ver Carrito de Compras")}
             >
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
@@ -335,14 +348,14 @@ export const Header: React.FC<HeaderProps> = ({
                     <span className="text-[10px] font-mono-label uppercase text-zinc-400">Ir</span>
                   </button>
 
-                  {/* Quick Utility Actions Row (Search & Theme) */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
+                  {/* Quick Utility Actions Row (Search, Language & Theme) */}
+                  <div className="grid grid-cols-3 gap-2 pt-1 items-center">
                     <button
                       onClick={() => {
                         onOpenSearch();
                         setMobileMenuOpen(false);
                       }}
-                      className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border transition-all ${
+                      className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border transition-all ${
                         isDarkMode
                           ? 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:border-zinc-700'
                           : 'bg-zinc-50 border-zinc-200 text-zinc-800 hover:bg-zinc-100'
@@ -352,23 +365,22 @@ export const Header: React.FC<HeaderProps> = ({
                       <span className="text-xs font-bold">Buscar</span>
                     </button>
 
-                    <button
-                      onClick={() => setIsDarkMode(!isDarkMode)}
-                      className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border transition-all ${
-                        isDarkMode
-                          ? 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:border-zinc-700'
-                          : 'bg-zinc-50 border-zinc-200 text-zinc-800 hover:bg-zinc-100'
-                      }`}
-                    >
-                      {isDarkMode ? (
-                        <Sun className="w-4 h-4 text-amber-400" />
-                      ) : (
-                        <Moon className="w-4 h-4 text-zinc-800" />
-                      )}
-                      <span className="text-xs font-bold">
-                        {isDarkMode ? 'Modo Claro' : 'Modo Oscuro'}
-                      </span>
-                    </button>
+                    <div className="flex justify-center">
+                      <LanguageDropdown
+                        language={language}
+                        setLanguage={setLanguage}
+                        isDarkMode={isDarkMode}
+                      />
+                    </div>
+
+                    <div className="flex justify-center">
+                      <ThemeDropdown
+                        themeMode={themeMode}
+                        setThemeMode={setThemeMode}
+                        isDarkMode={isDarkMode}
+                        language={language}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -379,7 +391,7 @@ export const Header: React.FC<HeaderProps> = ({
                   currentView === 'home' ? 'text-[#c37b58] font-bold' : ''
                 }`}
               >
-                Novedades
+                {t('newArrivals', 'Novedades')}
               </button>
 
               {/* Colección Accordion */}
@@ -390,7 +402,7 @@ export const Header: React.FC<HeaderProps> = ({
                     currentView === 'collection' ? 'text-[#c37b58] font-bold' : ''
                   }`}
                 >
-                  <span>Colección</span>
+                  <span>{t('collection', 'Colección')}</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${mobileCollectionOpen ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -427,7 +439,7 @@ export const Header: React.FC<HeaderProps> = ({
                   currentView === 'about' ? 'text-[#c37b58] font-bold' : ''
                 }`}
               >
-                Sobre Erika
+                {t('aboutErika', 'Sobre Erika')}
               </button>
 
               {/* Contacto */}
@@ -437,7 +449,7 @@ export const Header: React.FC<HeaderProps> = ({
                   currentView === 'contact' ? 'text-[#c37b58] font-bold' : ''
                 }`}
               >
-                Contacto
+                {t('contact', 'Contacto')}
               </button>
 
               <div className="pt-4 flex items-center justify-between text-xs text-zinc-400">

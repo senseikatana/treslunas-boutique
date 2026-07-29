@@ -2,11 +2,14 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Product } from '../types';
 import { useAllProducts } from '../hooks/useProductsQuery';
 import { ProductCard } from '../components/ProductCard';
+import { useTranslation } from 'react-i18next';
+import { LanguageCode } from '../i18n/translations';
 
 interface CollectionViewProps {
   onSelectProduct: (product: Product) => void;
   onQuickAdd: (product: Product) => void;
   isDarkMode: boolean;
+  language?: LanguageCode;
   selectedCategory?: string;
   setSelectedCategory?: (category: string) => void;
 }
@@ -27,19 +30,27 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
   const [sortBy, setSortBy] = useState<'featured' | 'price-low' | 'price-high' | 'name'>('featured');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (selectedCategory) {
       setActiveCategory(selectedCategory);
     }
   }, [selectedCategory]);
 
-  const categories = ['Todos', 'Vestidos', 'Tops & Blusas', 'Accesorios', 'Joyería'];
+  const categories = [
+    { label: t('allCategories', 'Todos'), id: 'Todos' },
+    { label: t('dresses', 'Vestidos'), id: 'Vestidos' },
+    { label: t('topsBlouses', 'Tops & Blusas'), id: 'Tops & Blusas' },
+    { label: t('accessories', 'Accesorios'), id: 'Accesorios' },
+    { label: t('jewelry', 'Joyería'), id: 'Joyería' },
+  ];
   const sizes = ['Todas', 'XS', 'S', 'M', 'L', 'XL', '36', '38', '40'];
   const colors = ['Todos', 'Negro', 'Blanco', 'Burdeos', 'Oro', 'Rosa', 'Verde', 'Azul'];
 
-  const handleCategoryChange = (cat: string) => {
-    setActiveCategory(cat);
-    if (setSelectedCategory) setSelectedCategory(cat);
+  const handleCategoryChange = (catId: string) => {
+    setActiveCategory(catId);
+    if (setSelectedCategory) setSelectedCategory(catId);
   };
 
   const filteredProducts = useMemo(() => {
@@ -81,16 +92,16 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
   };
 
   return (
-    <section className="bg-white dark:bg-[#0f0f10] transition-colors min-h-screen">
+    <section className="bg-slate-50 dark:bg-zinc-950 transition-colors min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         
         {/* Header Section */}
-        <header className="border-b border-gray-200 dark:border-gray-800 pb-6">
-          <h2 className="text-xl font-bold font-serif text-gray-900 sm:text-3xl dark:text-white">
-            Colección {activeCategory !== 'Todos' ? `— ${activeCategory}` : 'de Alta Costura'}
+        <header className="border-b border-slate-200 dark:border-zinc-800 pb-6">
+          <h2 className="text-xl font-bold font-serif text-slate-900 sm:text-3xl dark:text-zinc-100">
+            {t('collection', 'Colección')} {activeCategory !== 'Todos' ? `— ${activeCategory}` : ''}
           </h2>
 
-          <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-zinc-400">
             Piezas exclusivas confeccionadas con tejidos nobles, elegancia mediterránea y acabados artesanales disponibles en nuestra boutique de Cambrils.
           </p>
           <p className="text-xs text-[#c37b58] font-bold mt-1">
@@ -103,7 +114,7 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
           <button
             type="button"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="flex cursor-pointer items-center gap-2 border-b border-gray-400 dark:border-gray-600 pb-1 text-gray-900 dark:text-white transition hover:border-[#92003a]"
+            className="flex cursor-pointer items-center gap-2 border-b border-slate-400 dark:border-zinc-600 pb-1 text-slate-900 dark:text-zinc-100 transition hover:border-[#92003a]"
           >
             <span className="text-sm font-medium">
               {mobileFiltersOpen ? 'Ocultar Filtros & Ordenación' : 'Filtros & Ordenación'}
@@ -130,7 +141,7 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
             
             {/* Sort By Selector */}
             <div>
-              <label htmlFor="SortBy" className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+              <label htmlFor="SortBy" className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-zinc-300">
                 Ordenar Por
               </label>
 
@@ -138,7 +149,7 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
                 id="SortBy"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="mt-1 w-full rounded-sm border border-gray-300 bg-white p-2 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#92003a]"
+                className="mt-1 w-full rounded-xl border border-slate-300 bg-white p-2 text-sm text-slate-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-[#92003a]"
               >
                 <option value="featured">Destacados de Erika</option>
                 <option value="price-low">Precio: Menor a Mayor</option>
@@ -150,7 +161,7 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
             {/* Filters Section */}
             <div>
               <div className="flex items-center justify-between">
-                <p className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                <p className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-zinc-300">
                   Filtros
                 </p>
                 <button
@@ -167,14 +178,14 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
                 {/* Category Accordion */}
                 <details
                   open
-                  className="group overflow-hidden rounded-sm border border-gray-300 dark:border-gray-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900 shadow-sm"
                 >
                   <summary
-                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 dark:text-white transition hover:bg-gray-50 dark:hover:bg-zinc-800/50"
+                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-slate-900 dark:text-zinc-100 transition hover:bg-slate-50 dark:hover:bg-zinc-800/50"
                   >
                     <span className="text-xs font-bold uppercase tracking-wider"> Categorías </span>
 
-                    <span className="transition duration-300 group-open:-rotate-180 text-gray-500">
+                    <span className="transition duration-300 group-open:-rotate-180 text-slate-500">
                       <svg
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
@@ -193,20 +204,20 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
                     </span>
                   </summary>
 
-                  <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 p-3">
+                  <div className="border-t border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3">
                     <ul className="space-y-1">
                       {categories.map((cat) => (
-                        <li key={cat}>
+                        <li key={cat.id}>
                           <button
                             type="button"
-                            onClick={() => handleCategoryChange(cat)}
-                            className={`w-full text-left px-3 py-1.5 rounded-sm text-xs transition-colors font-medium ${
-                              activeCategory === cat
+                            onClick={() => handleCategoryChange(cat.id)}
+                            className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors font-medium ${
+                              activeCategory === cat.id
                                 ? 'bg-[#92003a] text-white font-bold'
-                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                                : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800'
                             }`}
                           >
-                            {cat}
+                            {cat.label}
                           </button>
                         </li>
                       ))}
@@ -216,14 +227,14 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
 
                 {/* Price Accordion */}
                 <details
-                  className="group overflow-hidden rounded-sm border border-gray-300 dark:border-gray-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900 shadow-sm"
                 >
                   <summary
-                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 dark:text-white transition hover:bg-gray-50 dark:hover:bg-zinc-800/50"
+                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-slate-900 dark:text-zinc-100 transition hover:bg-slate-50 dark:hover:bg-zinc-800/50"
                   >
                     <span className="text-xs font-bold uppercase tracking-wider"> Precio (€) </span>
 
-                    <span className="transition duration-300 group-open:-rotate-180 text-gray-500">
+                    <span className="transition duration-300 group-open:-rotate-180 text-slate-500">
                       <svg
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
@@ -242,8 +253,8 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
                     </span>
                   </summary>
 
-                  <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 p-4 space-y-3">
-                    <header className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                  <div className="border-t border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3">
+                    <header className="flex items-center justify-between text-xs text-slate-600 dark:text-zinc-400">
                       <span>Rango de €0 a €{maxPrice}</span>
                       <button
                         type="button"
@@ -256,26 +267,26 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
 
                     <div className="flex justify-between gap-2">
                       <label htmlFor="FilterPriceFrom" className="flex items-center gap-1 text-xs">
-                        <span className="text-gray-500">Desde €</span>
+                        <span className="text-slate-500">Desde €</span>
                         <input
                           type="number"
                           id="FilterPriceFrom"
                           value={minPrice}
                           onChange={(e) => setMinPrice(Number(e.target.value))}
                           placeholder="0"
-                          className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white p-1 text-xs text-center"
+                          className="w-full rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 p-1 text-xs text-center"
                         />
                       </label>
 
                       <label htmlFor="FilterPriceTo" className="flex items-center gap-1 text-xs">
-                        <span className="text-gray-500">Hasta €</span>
+                        <span className="text-slate-500">Hasta €</span>
                         <input
                           type="number"
                           id="FilterPriceTo"
                           value={maxPrice}
                           onChange={(e) => setMaxPrice(Number(e.target.value))}
                           placeholder="300"
-                          className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white p-1 text-xs text-center"
+                          className="w-full rounded-lg border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 p-1 text-xs text-center"
                         />
                       </label>
                     </div>
@@ -284,14 +295,14 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
 
                 {/* Sizes Accordion */}
                 <details
-                  className="group overflow-hidden rounded-sm border border-gray-300 dark:border-gray-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900 shadow-sm"
                 >
                   <summary
-                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 dark:text-white transition hover:bg-gray-50 dark:hover:bg-zinc-800/50"
+                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-slate-900 dark:text-zinc-100 transition hover:bg-slate-50 dark:hover:bg-zinc-800/50"
                   >
                     <span className="text-xs font-bold uppercase tracking-wider"> Tallas </span>
 
-                    <span className="transition duration-300 group-open:-rotate-180 text-gray-500">
+                    <span className="transition duration-300 group-open:-rotate-180 text-slate-500">
                       <svg
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
@@ -310,17 +321,17 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
                     </span>
                   </summary>
 
-                  <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 p-3">
+                  <div className="border-t border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3">
                     <div className="flex flex-wrap gap-1.5">
                       {sizes.map((sz) => (
                         <button
                           key={sz}
                           type="button"
                           onClick={() => setSelectedSize(sz)}
-                          className={`px-2.5 py-1 rounded text-xs font-semibold border transition-colors ${
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors ${
                             selectedSize === sz
                               ? 'bg-[#c37b58] text-white border-[#c37b58]'
-                              : 'border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-500'
+                              : 'border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 hover:border-slate-500'
                           }`}
                         >
                           {sz}
@@ -332,14 +343,14 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
 
                 {/* Colors Accordion */}
                 <details
-                  className="group overflow-hidden rounded-sm border border-gray-300 dark:border-gray-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900"
+                  className="group overflow-hidden rounded-2xl border border-slate-200 dark:border-zinc-800 [&_summary::-webkit-details-marker]:hidden bg-white dark:bg-zinc-900 shadow-sm"
                 >
                   <summary
-                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-gray-900 dark:text-white transition hover:bg-gray-50 dark:hover:bg-zinc-800/50"
+                    className="flex cursor-pointer items-center justify-between gap-2 p-4 text-slate-900 dark:text-zinc-100 transition hover:bg-slate-50 dark:hover:bg-zinc-800/50"
                   >
                     <span className="text-xs font-bold uppercase tracking-wider"> Colores </span>
 
-                    <span className="transition duration-300 group-open:-rotate-180 text-gray-500">
+                    <span className="transition duration-300 group-open:-rotate-180 text-slate-500">
                       <svg
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
@@ -358,17 +369,17 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
                     </span>
                   </summary>
 
-                  <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-zinc-900 p-3">
+                  <div className="border-t border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3">
                     <ul className="space-y-1">
                       {colors.map((col) => (
                         <li key={col}>
                           <button
                             type="button"
                             onClick={() => setSelectedColor(col)}
-                            className={`w-full text-left px-3 py-1 rounded text-xs transition-colors flex items-center justify-between ${
+                            className={`w-full text-left px-3 py-1 rounded-lg text-xs transition-colors flex items-center justify-between ${
                               selectedColor === col
                                 ? 'font-bold text-[#92003a] dark:text-[#c37b58]'
-                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                                : 'text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800'
                             }`}
                           >
                             <span>{col}</span>
@@ -387,14 +398,14 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
           {/* Product Cards Grid */}
           <div className="lg:col-span-3">
             {filteredProducts.length === 0 ? (
-              <div className="py-20 text-center space-y-3 border border-dashed border-gray-300 dark:border-gray-800 rounded-xl bg-gray-50 dark:bg-zinc-900/50">
-                <p className="font-serif text-base text-gray-600 dark:text-gray-400">
+              <div className="py-20 text-center space-y-3 border border-dashed border-slate-300 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900/50">
+                <p className="font-serif text-base text-slate-600 dark:text-zinc-400">
                   No encontramos piezas con los filtros seleccionados.
                 </p>
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="px-5 py-2.5 rounded-sm bg-[#92003a] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#72002d] transition-colors"
+                  className="px-5 py-2.5 rounded-xl bg-[#92003a] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#72002d] transition-colors"
                 >
                   Restablecer Filtros
                 </button>
@@ -420,4 +431,5 @@ export const CollectionView: React.FC<CollectionViewProps> = ({
     </section>
   );
 };
+
 

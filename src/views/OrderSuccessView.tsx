@@ -1,6 +1,7 @@
 import React from 'react';
 import { Order, PageView } from '../types';
 import { TripleMoonLogo } from '../components/TripleMoonLogo';
+import { WebhookAuditLog } from '../components/WebhookAuditLog';
 import { CheckCircle2, MapPin, Package, ArrowRight, Download } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -27,7 +28,7 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8 text-center">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 text-center">
       
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -44,10 +45,13 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({
         <h1 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight">
           ¡Gracias por tu compra en 3 Lunas!
         </h1>
-        <p className="text-xs md:text-sm text-zinc-400 max-w-md mx-auto">
-          Hemos recibido tu pedido <span className="font-bold text-[#c37b58]">#{order.id}</span>. Erika preparará tus prendas con el máximo cuidado y recibirás un correo en <span className="font-semibold text-zinc-200">{order.shipping.email}</span>.
+        <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
+          Hemos recibido tu pedido <span className="font-bold text-[#c37b58]">#{order.id}</span>. Erika preparará tus prendas con el máximo cuidado y recibirás un correo en <span className="font-semibold text-zinc-800 dark:text-zinc-200">{order.shipping.email}</span>.
         </p>
       </motion.div>
+
+      {/* Webhook Audit Log & Status Monitor */}
+      <WebhookAuditLog orderId={order.id} isDarkMode={isDarkMode} />
 
       {/* Order Summary Box */}
       <div className={`p-6 rounded-2xl border text-left space-y-4 ${
@@ -88,7 +92,7 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({
           </div>
         </div>
 
-        <div className="p-3 rounded bg-[#FFE185]/20 border border-[#FFE185]/40 text-xs flex items-center gap-2 text-zinc-300">
+        <div className="p-3 rounded bg-[#FFE185]/20 border border-[#FFE185]/40 text-xs flex items-center gap-2 text-zinc-700 dark:text-zinc-300">
           <MapPin className="w-4 h-4 text-[#FFE185] shrink-0" />
           <span>Entrega programada para Cambrils / Tarragona: <strong>24 Horas</strong></span>
         </div>
@@ -115,3 +119,4 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({
     </div>
   );
 };
+

@@ -9,6 +9,7 @@
   
   body {
     font-family: var(--font-body);
+    @apply bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-[#92003a] selection:text-white;
   }
 
   h1, h2, h3, h4, .font-heading {
@@ -46,7 +47,7 @@
   background: linear-gradient(135deg, #92003a 0%, #b21b50 50%, #680027 100%);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar with native Tailwind zinc/slate contrast */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -61,4 +62,5 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #92003a;
 }
+
 

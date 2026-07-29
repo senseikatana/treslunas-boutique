@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { useTranslation } from 'react-i18next';
 import { PageView, Product, CartItem, Order } from './types';
 import { PRODUCTS } from './data/products';
 import { Header } from './components/Header';
@@ -7,6 +10,12 @@ import { Footer } from './components/Footer';
 import { SearchModal } from './components/SearchModal';
 import { CartDrawer } from './components/CartDrawer';
 import { AnnouncementBanner } from './components/AnnouncementBanner';
+import { LanguageCode } from './i18n/translations';
+
+// Initialize Stripe JS SDK at top level
+const stripePromise = loadStripe(
+  (import.meta as any).env?.VITE_STRIPE_PUBLIC_KEY || 'pk_test_513LunasBoutiqueSandboxKeyExample9988776655'
+);
 
 // Views
 import { HomeView } from './views/HomeView';
@@ -24,25 +33,101 @@ export default function App() {
   const [currentView, setCurrentView] = useState<PageView>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]);
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
 
-  // Cart state
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      product: PRODUCTS[0], // Vestido Midi Lino Beige
-      selectedSize: 'M',
-      selectedColor: PRODUCTS[0].colors[0],
-      quantity: 1
-    },
-    {
-      product: PRODUCTS[2], // Selenite Moon Necklace
-      selectedSize: 'Única',
-      selectedColor: PRODUCTS[2].colors[0],
-      quantity: 1
+  // Theme mode: system, light, dark
+  const [themeMode, setThemeMode] = useState<'system' | 'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem('3lunas_theme_mode');
+      if (saved === 'system' || saved === 'light' || saved === 'dark') return saved;
+    } catch (e) {}
+    return 'system';
+  });
+
+  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
-  ]);
+    return true;
+  });
 
-  const [lastOrder, setLastOrder] = useState<Order | null>(null);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => setSystemPrefersDark(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const isDarkMode = themeMode === 'system' ? systemPrefersDark : themeMode === 'dark';
+
+  // Language state (5 languages: es, cat, en, fr, de)
+  const [language, setLanguage] = useState<LanguageCode>(() => {
+    try {
+      const saved = localStorage.getItem('3lunas_language');
+      if (saved && ['es', 'cat', 'en', 'fr', 'de'].includes(saved)) {
+        return saved as LanguageCode;
+      }
+    } catch (e) {}
+    return 'es';
+  });
+
+  // Cart state with persistence (starts strictly empty [] if no items added by user)
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('3lunas_cart_v1');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error al recuperar carrito desde localStorage:', e);
+    }
+    return [];
+  });
+
+  // Last order state with persistence
+  const [lastOrder, setLastOrder] = useState<Order | null>(() => {
+    try {
+      const saved = localStorage.getItem('3lunas_last_order');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return null;
+  });
+
+  // Save states to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('3lunas_cart_v1', JSON.stringify(cartItems));
+    } catch (e) {}
+  }, [cartItems]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('3lunas_theme_mode', themeMode);
+    } catch (e) {}
+  }, [themeMode]);
+
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('3lunas_language', language);
+      i18n.changeLanguage(language);
+    } catch (e) {}
+  }, [language, i18n]);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    if (lastOrder) {
+      try {
+        localStorage.setItem('3lunas_last_order', JSON.stringify(lastOrder));
+      } catch (e) {}
+    }
+  }, [lastOrder]);
 
   // Modals
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
@@ -112,11 +197,29 @@ export default function App() {
   };
 
   const totalCartCount = cartItems.reduce((acc, i) => acc + i.quantity, 0);
+  const cartSubtotal = cartItems.reduce((acc, i) => acc + i.product.price * i.quantity, 0);
+  const shippingCost = cartSubtotal > 50 ? 0 : 4.95;
+  const grandTotal = cartSubtotal + shippingCost;
+
+  const stripeOptions = {
+    mode: 'payment' as const,
+    amount: Math.max(100, Math.round(grandTotal * 100)),
+    currency: 'eur',
+    appearance: {
+      theme: isDarkMode ? ('night' as const) : ('stripe' as const),
+      variables: {
+        colorPrimary: '#92003a',
+        colorBackground: isDarkMode ? '#141416' : '#ffffff',
+        colorText: isDarkMode ? '#ffffff' : '#18181b',
+      },
+    },
+  };
 
   return (
-    <div className={`min-h-screen flex flex-col relative transition-colors duration-300 ${
-      isDarkMode ? 'bg-[#050505] text-[#F5F5F5]' : 'bg-[#faf8f6] text-[#1c1b1b]'
-    }`}>
+    <Elements stripe={stripePromise} options={stripeOptions} key={`${isDarkMode}-${Math.round(grandTotal * 100)}`}>
+      <div className={`min-h-screen flex flex-col relative transition-colors duration-300 ${
+        isDarkMode ? 'bg-zinc-950 text-zinc-100' : 'bg-slate-50 text-slate-900'
+      }`}>
       {/* Sophisticated Dark Ambient Lighting Blurs */}
       {isDarkMode && (
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -130,6 +233,7 @@ export default function App() {
       <AnnouncementBanner
         setCurrentView={setCurrentView}
         onSelectCategory={setSelectedCategory}
+        language={language}
       />
 
       {/* Header */}
@@ -140,7 +244,10 @@ export default function App() {
         onOpenSearch={() => setSearchOpen(true)}
         onOpenCart={() => setCartDrawerOpen(true)}
         isDarkMode={isDarkMode}
-        setIsDarkMode={setIsDarkMode}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
+        language={language}
+        setLanguage={setLanguage}
         selectedCategory={selectedCategory}
         onSelectCategory={(cat) => {
           setSelectedCategory(cat);
@@ -164,6 +271,7 @@ export default function App() {
                 onQuickAdd={handleQuickAdd}
                 setCurrentView={setCurrentView}
                 isDarkMode={isDarkMode}
+                language={language}
               />
             )}
 
@@ -172,6 +280,7 @@ export default function App() {
                 onSelectProduct={handleSelectProduct}
                 onQuickAdd={handleQuickAdd}
                 isDarkMode={isDarkMode}
+                language={language}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
               />
@@ -184,6 +293,7 @@ export default function App() {
                 onSelectProduct={handleSelectProduct}
                 setCurrentView={setCurrentView}
                 isDarkMode={isDarkMode}
+                language={language}
               />
             )}
 
@@ -195,6 +305,7 @@ export default function App() {
                 onClearCart={handleClearCart}
                 setCurrentView={setCurrentView}
                 isDarkMode={isDarkMode}
+                language={language}
               />
             )}
 
@@ -261,7 +372,9 @@ export default function App() {
         onClearCart={handleClearCart}
         setCurrentView={setCurrentView}
         isDarkMode={isDarkMode}
+        language={language}
       />
     </div>
-  );
+  </Elements>
+);
 }

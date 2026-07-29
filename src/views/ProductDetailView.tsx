@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Product, CartItem, PageView } from '../types';
 import { PRODUCTS } from '../data/products';
-import { ShoppingBag, MessageCircle, ChevronDown, ChevronUp, Check, Ruler, Truck, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, MessageCircle, ChevronDown, Check, Ruler } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { LanguageCode } from '../i18n/translations';
 
 interface ProductDetailViewProps {
   product: Product;
@@ -10,6 +12,7 @@ interface ProductDetailViewProps {
   onSelectProduct: (product: Product) => void;
   setCurrentView: (view: PageView) => void;
   isDarkMode: boolean;
+  language?: LanguageCode;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
@@ -17,15 +20,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onAddToCart,
   onSelectProduct,
   setCurrentView,
-  isDarkMode
+  isDarkMode,
 }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || 'M');
   const [selectedColor, setSelectedColor] = useState(product.colors[0] || { name: 'Único', hex: '#000000' });
   const [quantity, setQuantity] = useState(1);
-  const [openAccordion, setOpenAccordion] = useState<'care' | 'shipping' | null>('care');
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [addedToast, setAddedToast] = useState(false);
+
+  const { t } = useTranslation();
 
   // Complete the look products
   const completeTheLookProducts = (product.completeTheLookIds || [])
@@ -53,7 +57,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 right-6 z-50 bg-emerald-600 text-white px-5 py-3.5 rounded-lg shadow-2xl flex items-center gap-3 font-medium text-xs uppercase tracking-wider"
+            className="fixed top-24 right-6 z-50 bg-emerald-600 text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 font-medium text-xs uppercase tracking-wider"
           >
             <Check className="w-5 h-5 bg-white/20 p-0.5 rounded-full" />
             <span>¡Añadido a la cesta con éxito!</span>
@@ -64,7 +68,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       {/* Main Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         
-        {/* Left: Gallery (Thumbnails + Main Image) matching screenshot #9 & #10 */}
+        {/* Left: Gallery (Thumbnails + Main Image) */}
         <div className="lg:col-span-7 flex flex-col-reverse md:flex-row gap-4">
           
           {/* Thumbnails vertical column */}
@@ -73,10 +77,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <button
                 key={idx}
                 onClick={() => setSelectedImage(idx)}
-                className={`w-16 h-20 md:w-20 md:h-24 rounded overflow-hidden border-2 transition-all shrink-0 ${
+                className={`w-16 h-20 md:w-20 md:h-24 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
                   selectedImage === idx
                     ? 'border-[#92003a] scale-105 shadow-md'
-                    : 'border-transparent opacity-70 hover:opacity-100'
+                    : 'border-slate-200 dark:border-zinc-800 opacity-70 hover:opacity-100'
                 }`}
               >
                 <img src={img} alt={`Vista ${idx + 1}`} className="w-full h-full object-cover" />
@@ -85,7 +89,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           </div>
 
           {/* Main Selected Image */}
-          <div className="flex-1 aspect-[3/4] rounded-xl overflow-hidden bg-zinc-900/10 relative border border-zinc-800/20">
+          <div className="flex-1 aspect-[3/4] rounded-2xl overflow-hidden bg-slate-100 dark:bg-zinc-900 relative border border-slate-200 dark:border-zinc-800">
             <motion.img
               key={selectedImage}
               initial={{ opacity: 0.8 }}
@@ -104,33 +108,33 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[#c37b58]">
-              Colección / {product.category}
+              {t('collection', 'Colección')} / {product.category}
             </span>
-            <h1 className="font-serif text-3xl sm:text-4xl font-semibold mt-1">
+            <h1 className="font-serif text-3xl sm:text-4xl font-semibold mt-1 text-slate-900 dark:text-zinc-100">
               {product.name}
             </h1>
             <div className="mt-2 flex items-baseline gap-3">
-              <span className="font-heading font-black text-2xl text-[#92003a] dark:text-[#EAB393]">
+              <span className="font-heading font-black text-2xl text-[#92003a] dark:text-[#c37b58]">
                 €{product.price.toFixed(2)}
               </span>
               {product.originalPrice && (
-                <span className="text-sm text-zinc-500 line-through">
+                <span className="text-sm text-slate-400 dark:text-zinc-500 line-through">
                   €{product.originalPrice.toFixed(2)}
                 </span>
               )}
             </div>
           </div>
 
-          <p className="text-xs md:text-sm text-zinc-400 leading-relaxed">
+          <p className="text-xs md:text-sm text-slate-600 dark:text-zinc-300 leading-relaxed">
             {product.description}
           </p>
 
           {/* Erika's Advice Callout Box */}
           {product.erikaAdvice && (
-            <div className={`p-4 rounded-lg border text-xs leading-relaxed space-y-1 ${
-              isDarkMode ? 'bg-[#92003a]/10 border-[#92003a]/30 text-zinc-300' : 'bg-[#fff5f7] border-[#92003a]/20 text-zinc-800'
+            <div className={`p-4 rounded-xl border text-xs leading-relaxed space-y-1 ${
+              isDarkMode ? 'bg-[#92003a]/10 border-[#92003a]/30 text-zinc-300' : 'bg-rose-50/80 border-[#92003a]/20 text-slate-800'
             }`}>
-              <div className="font-bold text-[#92003a] dark:text-[#EAB393] uppercase tracking-wider flex items-center gap-1.5">
+              <div className="font-bold text-[#92003a] dark:text-[#c37b58] uppercase tracking-wider flex items-center gap-1.5">
                 <span>✨ El consejo de Erika:</span>
               </div>
               <p className="italic">{product.erikaAdvice}</p>
@@ -140,8 +144,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           {/* Color Selector */}
           {product.colors.length > 0 && (
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 block">
-                Color: <span className="font-semibold text-zinc-200">{selectedColor.name}</span>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">
+                {t('selectColor', 'Seleccionar Color')}: <span className="font-semibold text-slate-800 dark:text-zinc-200">{selectedColor.name}</span>
               </label>
               <div className="flex gap-3">
                 {product.colors.map((c, i) => (
@@ -149,7 +153,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     key={i}
                     onClick={() => setSelectedColor(c)}
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-transform ${
-                      selectedColor.name === c.name ? 'border-[#92003a] scale-110 ring-2 ring-[#92003a]/30' : 'border-zinc-600'
+                      selectedColor.name === c.name ? 'border-[#92003a] scale-110 ring-2 ring-[#92003a]/30' : 'border-slate-300 dark:border-zinc-700'
                     }`}
                     style={{ backgroundColor: c.hex }}
                     title={c.name}
@@ -167,13 +171,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           {product.sizes.length > 0 && (
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <label className="font-bold uppercase tracking-wider text-zinc-400 block">Tamaño</label>
+                <label className="font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">{t('selectSize', 'Seleccionar Talla')}</label>
                 <button
                   onClick={() => setSizeGuideOpen(true)}
-                  className="text-zinc-400 hover:text-[#c37b58] underline flex items-center gap-1"
+                  className="text-slate-500 dark:text-zinc-400 hover:text-[#c37b58] underline flex items-center gap-1"
                 >
                   <Ruler className="w-3.5 h-3.5" />
-                  <span>Guía de tallas</span>
+                  <span>{t('sizeGuide', 'Guía de tallas')}</span>
                 </button>
               </div>
 
@@ -182,10 +186,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   <button
                     key={sz}
                     onClick={() => setSelectedSize(sz)}
-                    className={`w-12 h-10 rounded border text-xs font-bold transition-colors ${
+                    className={`w-12 h-10 rounded-xl border text-xs font-bold transition-colors ${
                       selectedSize === sz
                         ? 'bg-[#92003a] text-white border-[#92003a]'
-                        : 'border-zinc-700/60 hover:border-zinc-400 text-zinc-300'
+                        : 'border-slate-200 dark:border-zinc-800 hover:border-slate-400 dark:hover:border-zinc-600 text-slate-700 dark:text-zinc-300'
                     }`}
                   >
                     {sz}
@@ -200,11 +204,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             <div className="flex items-center gap-4">
               <div>
                 <label htmlFor="Quantity-detail" className="sr-only">Cantidad</label>
-                <div className="flex items-center rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-12">
+                <div className="flex items-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-12">
                   <button
                     type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="size-10 leading-10 text-center text-zinc-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
+                    className="size-10 leading-10 text-center text-slate-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
                   >
                     &minus;
                   </button>
@@ -219,13 +223,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                         setQuantity(val);
                       }
                     }}
-                    className="h-10 w-12 border-transparent text-center text-sm font-bold text-zinc-900 dark:text-white bg-transparent [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none focus:outline-none"
+                    className="h-10 w-12 border-transparent text-center text-sm font-bold text-slate-900 dark:text-white bg-transparent [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none focus:outline-none"
                   />
 
                   <button
                     type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="size-10 leading-10 text-center text-zinc-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
+                    className="size-10 leading-10 text-center text-slate-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
                   >
                     &plus;
                   </button>
@@ -234,46 +238,46 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
               <button
                 onClick={handleAdd}
-                className="flex-1 h-12 rounded bg-gradient-to-r from-[#92003a] to-[#b21b50] text-white font-black text-xs uppercase tracking-widest hover:opacity-95 transition-opacity flex items-center justify-center gap-2 shadow-lg"
+                className="flex-1 h-12 rounded-xl bg-[#92003a] hover:bg-[#72002d] text-white font-black text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2 shadow-md"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Añadir a la cesta</span>
+                <span>{t('addToCart', 'Añadir a la Cesta')}</span>
               </button>
             </div>
 
-            {/* WhatsApp Direct Consult Button matching screenshot #9 & #10 */}
+            {/* WhatsApp Direct Consult Button */}
             <a
               href={`https://wa.me/34600123456?text=Hola%20Erika,%20tengo%20una%20consulta%20sobre%20la%20pieza%20${encodeURIComponent(product.name)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className={`w-full py-3 rounded border font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors ${
+              className={`w-full py-3 rounded-xl border font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors ${
                 isDarkMode 
-                  ? 'border-zinc-700 text-zinc-300 hover:bg-zinc-800' 
-                  : 'border-zinc-300 text-zinc-800 hover:bg-zinc-100'
+                  ? 'border-zinc-800 text-zinc-300 hover:bg-zinc-800' 
+                  : 'border-slate-200 text-slate-800 hover:bg-slate-100'
               }`}
             >
               <MessageCircle className="w-4 h-4 text-emerald-500" />
-              <span>Consulta por WhatsApp</span>
+              <span>{t('chatWithErika', 'Hablar con Erika en WhatsApp')}</span>
             </a>
           </div>
 
-          {/* Completa el Look Section matching screenshot #9 & #10 */}
+          {/* Completa el Look Section */}
           {completeTheLookProducts.length > 0 && (
-            <div className="pt-6 border-t border-zinc-800/20 space-y-3">
-              <h4 className="font-serif font-bold text-base">Completa el look</h4>
+            <div className="pt-6 border-t border-slate-200 dark:border-zinc-800 space-y-3">
+              <h4 className="font-serif font-bold text-base text-slate-900 dark:text-zinc-100">Completa el look</h4>
               <div className="grid grid-cols-2 gap-3">
                 {completeTheLookProducts.map((p) => (
                   <div
                     key={p.id}
                     onClick={() => onSelectProduct(p)}
-                    className={`p-2 rounded border cursor-pointer flex items-center gap-3 transition-colors ${
-                      isDarkMode ? 'bg-zinc-900/50 border-zinc-800 hover:border-[#c37b58]' : 'bg-zinc-50 border-zinc-200 hover:border-[#92003a]'
+                    className={`p-2.5 rounded-xl border cursor-pointer flex items-center gap-3 transition-colors ${
+                      isDarkMode ? 'bg-zinc-900 border-zinc-800 hover:border-[#c37b58]' : 'bg-white border-slate-200 hover:border-[#92003a] shadow-xs'
                     }`}
                   >
-                    <img src={p.images[0]} alt={p.name} className="w-12 h-14 object-cover rounded" />
+                    <img src={p.images[0]} alt={p.name} className="w-12 h-14 object-cover rounded-lg" />
                     <div>
-                      <h5 className="font-serif font-bold text-xs line-clamp-1">{p.name}</h5>
-                      <span className="text-xs font-black text-[#92003a] dark:text-[#EAB393]">€{p.price.toFixed(2)}</span>
+                      <h5 className="font-serif font-bold text-xs line-clamp-1 text-slate-900 dark:text-zinc-100">{p.name}</h5>
+                      <span className="text-xs font-black text-[#92003a] dark:text-[#c37b58]">€{p.price.toFixed(2)}</span>
                     </div>
                   </div>
                 ))}
@@ -281,14 +285,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
           )}
 
-          {/* HyperUI Accordion: Details, Care, Shipping */}
-          <div className="pt-4 border-t border-zinc-800/20 space-y-2">
-            <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/60 transition-colors">
-              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-4 py-3 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
-                <span>Guía de Tallas y Cuidados</span>
+          {/* Accordion: Details, Care, Shipping */}
+          <div className="pt-4 border-t border-slate-200 dark:border-zinc-800 space-y-2">
+            <details className="group [&_summary::-webkit-details-marker]:hidden border border-slate-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 transition-colors">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-xl px-4 py-3 font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-100 hover:bg-slate-50 dark:hover:bg-zinc-800/60">
+                <span>{t('composition', 'Composición y Cuidados')}</span>
                 <svg
                   aria-hidden="true"
-                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-zinc-500 dark:text-zinc-400"
+                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-slate-500 dark:text-zinc-400"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -297,7 +301,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
-              <div className="p-4 pt-2 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 border-t border-zinc-100 dark:border-zinc-800/40">
+              <div className="p-4 pt-2 text-xs text-slate-600 dark:text-zinc-400 space-y-2 border-t border-slate-100 dark:border-zinc-800/40">
                 <p>{product.careGuide}</p>
                 <ul className="list-disc list-inside space-y-1 pt-1">
                   {product.details.map((d, i) => (
@@ -307,12 +311,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             </details>
 
-            <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/60 transition-colors">
-              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-4 py-3 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
+            <details className="group [&_summary::-webkit-details-marker]:hidden border border-slate-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 transition-colors">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-xl px-4 py-3 font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-100 hover:bg-slate-50 dark:hover:bg-zinc-800/60">
                 <span>Envíos & Recogida en Cambrils</span>
                 <svg
                   aria-hidden="true"
-                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-zinc-500 dark:text-zinc-400"
+                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-slate-500 dark:text-zinc-400"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -321,28 +325,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </summary>
-              <div className="p-4 pt-2 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 border-t border-zinc-100 dark:border-zinc-800/40">
-                <p>• <strong>Click & Collect:</strong> Recogida gratuita en tienda en Cambrils (Carrer de les Tres Llunes, 12).</p>
+              <div className="p-4 pt-2 text-xs text-slate-600 dark:text-zinc-400 space-y-2 border-t border-slate-100 dark:border-zinc-800/40">
+                <p>• <strong>Click & Collect:</strong> Recogida gratuita en tienda en Cambrils (Carrer de la Mar, 14).</p>
                 <p>• <strong>Envío Exprés 24h:</strong> Gratis en pedidos superiores a €50 para Cambrils, Reus, Salou y Tarragona.</p>
-              </div>
-            </details>
-
-            <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/60 transition-colors">
-              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-4 py-3 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
-                <span>Garantía de Autenticidad & Devoluciones</span>
-                <svg
-                  aria-hidden="true"
-                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-zinc-500 dark:text-zinc-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="p-4 pt-2 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 border-t border-zinc-100 dark:border-zinc-800/40">
-                <p>Todas las piezas de Erika & Erika son confeccionadas con tejidos de la más alta calidad. Dispones de 14 días para cambios o devoluciones en tienda física u online.</p>
               </div>
             </details>
           </div>
@@ -359,8 +344,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className={`max-w-md w-full p-6 rounded-xl border shadow-2xl space-y-4 ${
-                isDarkMode ? 'bg-[#141416] border-zinc-800 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+              className={`max-w-md w-full p-6 rounded-2xl border shadow-2xl space-y-4 ${
+                isDarkMode ? 'bg-zinc-900 border-zinc-800 text-white' : 'bg-white border-slate-200 text-slate-900'
               }`}
             >
               <div className="flex justify-between items-center">
@@ -373,14 +358,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <div className="text-xs space-y-2">
                 <table className="w-full border-collapse text-center">
                   <thead>
-                    <tr className="border-b border-zinc-700 text-[#c37b58]">
+                    <tr className="border-b border-slate-200 dark:border-zinc-700 text-[#c37b58]">
                       <th className="py-2">Talla</th>
                       <th className="py-2">Pecho (cm)</th>
                       <th className="py-2">Cintura (cm)</th>
                       <th className="py-2">Cadera (cm)</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800 text-zinc-300">
+                  <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-slate-700 dark:text-zinc-300">
                     <tr><td className="py-1.5 font-bold">XS</td><td>82-85</td><td>62-65</td><td>90-93</td></tr>
                     <tr><td className="py-1.5 font-bold">S</td><td>86-89</td><td>66-69</td><td>94-97</td></tr>
                     <tr><td className="py-1.5 font-bold">M</td><td>90-93</td><td>70-73</td><td>98-101</td></tr>
@@ -392,7 +377,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 
               <button
                 onClick={() => setSizeGuideOpen(false)}
-                className="w-full py-2 bg-[#92003a] text-white text-xs font-bold rounded"
+                className="w-full py-2.5 bg-[#92003a] text-white text-xs font-bold rounded-xl"
               >
                 Cerrar
               </button>
@@ -404,3 +389,4 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
     </div>
   );
 };
+

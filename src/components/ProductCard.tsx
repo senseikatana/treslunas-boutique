@@ -23,10 +23,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       viewport={{ once: true, margin: '-50px' }}
       whileHover={{ y: -6 }}
       transition={{ duration: 0.3 }}
-      className={`group relative rounded-lg overflow-hidden border transition-all duration-300 flex flex-col ${
+      className={`group relative rounded-xl overflow-hidden border transition-all duration-300 flex flex-col ${
         isDarkMode 
-          ? 'bg-[#141416] border-zinc-800/80 hover:border-[#c37b58]/50 shadow-lg shadow-black/40' 
-          : 'bg-white border-zinc-200 hover:border-[#92003a]/30 shadow-md hover:shadow-xl'
+          ? 'bg-zinc-900 border-zinc-800 hover:border-[#c37b58]/50 shadow-lg shadow-black/40' 
+          : 'bg-white border-slate-200 hover:border-[#92003a]/40 shadow-xs hover:shadow-md'
       }`}
     >
       {/* Product Image Box */}

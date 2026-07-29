@@ -1,7 +1,9 @@
 import React from 'react';
 import { CartItem, PageView } from '../types';
-import { X, Trash2, ShoppingBag, Truck, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Truck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { LanguageCode } from '../i18n/translations';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -12,6 +14,7 @@ interface CartDrawerProps {
   onClearCart?: () => void;
   setCurrentView: (view: PageView) => void;
   isDarkMode: boolean;
+  language?: LanguageCode;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -22,9 +25,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onRemoveItem,
   onClearCart,
   setCurrentView,
-  isDarkMode
+  isDarkMode,
 }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const { t } = useTranslation();
 
   if (!isOpen) return null;
 
@@ -40,7 +44,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         />
 
-        {/* HyperUI Popup Product Card Drawer Panel */}
+        {/* Popup Product Card Drawer Panel */}
         <motion.div
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
@@ -52,14 +56,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           tabIndex={-1}
           className={`relative w-full max-w-sm sm:max-w-md h-full shadow-2xl flex flex-col z-10 border-l px-4 py-6 sm:px-6 lg:px-8 transition-colors ${
             isDarkMode
-              ? 'border-gray-800 bg-zinc-900 text-white shadow-black/80'
-              : 'border-gray-200 bg-gray-50 text-gray-900'
+              ? 'border-zinc-800 bg-zinc-950 text-zinc-100 shadow-black/80'
+              : 'border-slate-200 bg-slate-50 text-slate-900'
           }`}
         >
-          {/* Close button - HyperUI style */}
+          {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 text-gray-500 transition hover:scale-110 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1"
+            className="absolute right-4 top-4 text-slate-400 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white p-1 transition-transform hover:scale-110"
           >
             <span className="sr-only">Close cart</span>
             <svg
@@ -76,26 +80,26 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           </button>
 
           {/* Drawer Title */}
-          <div className="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800 pr-8">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800 pr-8">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-[#92003a] dark:text-[#c37b58]" />
-              <h3 className="font-heading font-black text-base uppercase tracking-wider text-gray-900 dark:text-white">
-                Tu Cesta ({cartItems.length})
+              <h3 className="font-heading font-black text-base uppercase tracking-wider text-slate-900 dark:text-zinc-100">
+                {t('cart', 'Carrito de Compras')} ({cartItems.length})
               </h3>
             </div>
             {cartItems.length > 0 && onClearCart && (
               <button
                 onClick={onClearCart}
-                className="text-[11px] text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 underline transition-colors"
-                title="Vaciar cesta completa"
+                className="text-[11px] text-slate-400 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 underline transition-colors"
+                title={t('clearCart', 'Vaciar carrito')}
               >
-                Vaciar
+                {t('clearCart', 'Vaciar')}
               </button>
             )}
           </div>
 
           {/* Local Delivery Badge */}
-          <div className="mt-3 p-2.5 rounded-sm bg-[#FFE185] text-[#1C1B1B] text-xs font-bold flex items-center justify-between shadow-sm">
+          <div className="mt-3 p-2.5 rounded-xl bg-[#FFE185] text-[#1C1B1B] text-xs font-bold flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2">
               <Truck className="w-4 h-4 shrink-0" />
               <span>Envío Local Cambrils / Tarragona</span>
@@ -103,41 +107,41 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <span className="text-[10px] bg-black/10 px-1.5 py-0.5 rounded font-mono">24H</span>
           </div>
 
-          {/* Items List - HyperUI Product Cards Popup Layout */}
+          {/* Items List */}
           <div className="mt-4 flex-1 overflow-y-auto space-y-6 pr-1">
             {cartItems.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-4 text-gray-500 dark:text-gray-400">
-                <ShoppingBag className="w-12 h-12 stroke-[1.2] text-gray-400 dark:text-gray-600" />
-                <p className="font-serif text-base">Tu cesta está vacía en este momento.</p>
+              <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-4 text-slate-500 dark:text-zinc-400">
+                <ShoppingBag className="w-12 h-12 stroke-[1.2] text-slate-400 dark:text-zinc-600" />
+                <p className="font-serif text-base">{t('cartEmpty', 'Tu cesta está vacía en este momento.')}</p>
                 <button
                   onClick={() => {
                     setCurrentView('collection');
                     onClose();
                   }}
-                  className="px-6 py-2.5 rounded-sm bg-[#92003a] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#b21b50] transition-colors"
+                  className="px-6 py-2.5 rounded-xl bg-[#92003a] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#72002d] transition-colors"
                 >
-                  Descubrir Colección
+                  {t('exploreCollection', 'Explorar Colección')}
                 </button>
               </div>
             ) : (
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {cartItems.map((item, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center gap-4 p-3 rounded-md border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900/80 transition-colors"
+                    className="flex items-center gap-4 p-3 rounded-xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 transition-colors shadow-xs"
                   >
                     <img
                       src={item.product.images[0]}
                       alt={item.product.name}
-                      className="size-16 rounded-sm object-cover shrink-0"
+                      className="size-16 rounded-lg object-cover shrink-0"
                     />
 
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-zinc-100 truncate">
                         {item.product.name}
                       </h3>
 
-                      <dl className="mt-0.5 space-y-px text-[10px] text-gray-600 dark:text-gray-300">
+                      <dl className="mt-0.5 space-y-px text-[10px] text-slate-600 dark:text-zinc-300">
                         <div>
                           <dt className="inline font-medium">Talla:</dt>{' '}
                           <dd className="inline font-bold">{item.selectedSize}</dd>
@@ -176,14 +180,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                               onUpdateQuantity(idx, val);
                             }
                           }}
-                          className="h-8 w-12 rounded-sm border border-gray-300 bg-white p-0 text-center text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none font-bold"
+                          className="h-8 w-12 rounded-lg border border-slate-300 bg-white p-0 text-center text-xs text-slate-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 focus:outline-none font-bold"
                         />
                       </form>
 
                       <button
                         type="button"
                         onClick={() => onRemoveItem(idx)}
-                        className="text-gray-500 transition hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 p-1"
+                        className="text-slate-400 transition hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 p-1"
                         title="Eliminar producto"
                       >
                         <span className="sr-only">Remove item</span>
@@ -210,11 +214,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             )}
           </div>
 
-          {/* HyperUI Popup Action Buttons Footer */}
+          {/* Action Buttons Footer */}
           {cartItems.length > 0 && (
-            <div className="pt-4 mt-2 border-t border-gray-200 dark:border-gray-800 space-y-3 text-center">
+            <div className="pt-4 mt-2 border-t border-slate-200 dark:border-zinc-800 space-y-3 text-center">
               <div className="flex justify-between items-center text-sm font-bold px-1">
-                <span className="text-gray-700 dark:text-gray-300">Subtotal:</span>
+                <span className="text-slate-700 dark:text-zinc-300">{t('subtotal', 'Subtotal')}:</span>
                 <span className="text-base text-[#92003a] dark:text-[#c37b58]">
                   €{subtotal.toFixed(2)}
                 </span>
@@ -226,9 +230,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     setCurrentView('cart');
                     onClose();
                   }}
-                  className="block w-full rounded-sm border border-gray-300 bg-gray-50 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-700 transition-colors hover:text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-700"
+                  className="block w-full rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-800 transition-colors hover:bg-slate-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
                 >
-                  Ver mi carrito ({cartItems.length})
+                  {t('yourBag', 'Tu Cesta de Compras')} ({cartItems.length})
                 </button>
 
                 <button
@@ -236,16 +240,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     setCurrentView('checkout');
                     onClose();
                   }}
-                  className="block w-full rounded-sm border border-[#92003a] bg-[#92003a] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:border-[#72002d] hover:bg-[#72002d] dark:border-[#c37b58] dark:bg-[#c37b58] dark:text-gray-900 dark:hover:border-[#d68b66] dark:hover:bg-[#d68b66]"
+                  className="block w-full rounded-xl border border-[#92003a] bg-[#92003a] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:border-[#72002d] hover:bg-[#72002d] dark:border-[#c37b58] dark:bg-[#c37b58] dark:text-zinc-950 dark:hover:bg-[#d68b66]"
                 >
-                  Procesar Pedido (Checkout)
+                  {t('checkout', 'Procesar Pago Seguro')}
                 </button>
 
                 <button
                   onClick={onClose}
-                  className="inline-block text-xs font-medium text-gray-600 dark:text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-900 dark:hover:text-gray-200"
+                  className="inline-block text-xs font-medium text-slate-500 dark:text-zinc-400 underline underline-offset-4 transition-colors hover:text-slate-900 dark:hover:text-zinc-200"
                 >
-                  Continuar comprando
+                  {t('continueShopping', 'Continuar Comprando')}
                 </button>
               </div>
             </div>
@@ -255,3 +259,4 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
     </AnimatePresence>
   );
 };
+
