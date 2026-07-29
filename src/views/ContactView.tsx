@@ -163,6 +163,96 @@ export const ContactView: React.FC<ContactViewProps> = ({ isDarkMode }) => {
 
       </div>
 
+      {/* HyperUI Accordion Section: Preguntas Frecuentes (FAQ) */}
+      <div className="pt-10 border-t border-zinc-800/20 space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="font-heading font-black text-xl sm:text-2xl uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+            Preguntas Frecuentes (FAQ)
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Resolvemos tus dudas sobre pedidos, recogida en Cambrils y asesoría de estilo
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto space-y-3">
+          <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-[#141416] transition-colors">
+            <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-4 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+              <span>¿Cómo funciona la opción Click & Collect en Cambrils?</span>
+              <svg
+                aria-hidden="true"
+                className="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#c37b58]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div className="px-5 pb-4 pt-1 text-xs text-zinc-600 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800/40 leading-relaxed">
+              Puedes seleccionar la opción "Recogida en Tienda" al realizar tu pedido. Tu paquete estará listo en nuestra boutique de Cambrils en menos de 2 horas. Te enviaremos un mensaje de confirmación por WhatsApp o email cuando puedas pasar a recogerlo.
+            </div>
+          </details>
+
+          <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-[#141416] transition-colors">
+            <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-4 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+              <span>¿Cuáles son los plazos y costes de envío?</span>
+              <svg
+                aria-hidden="true"
+                className="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#c37b58]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div className="px-5 pb-4 pt-1 text-xs text-zinc-600 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800/40 leading-relaxed">
+              Los envíos locales en la zona de Tarragona, Reus y Salou son gratuitos a partir de €50 y se entregan en 24 horas laborables. Para el resto de la península, la entrega estándar tarda entre 24 y 48 horas.
+            </div>
+          </details>
+
+          <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-[#141416] transition-colors">
+            <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-4 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+              <span>¿Ofrecen servicio de asesoría de imagen y estilismo personalizado?</span>
+              <svg
+                aria-hidden="true"
+                className="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#c37b58]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div className="px-5 pb-4 pt-1 text-xs text-zinc-600 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800/40 leading-relaxed">
+              ¡Sí! Erika realiza sesiones de asesoramiento privado para eventos especiales, bodas y renovación de vestuario. Puedes solicitar tu cita directamente por WhatsApp o rellenando el formulario de contacto de esta página.
+            </div>
+          </details>
+
+          <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-[#141416] transition-colors">
+            <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-5 py-4 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+              <span>¿Qué política de cambios y devoluciones tienen?</span>
+              <svg
+                aria-hidden="true"
+                className="size-5 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#c37b58]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div className="px-5 pb-4 pt-1 text-xs text-zinc-600 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800/40 leading-relaxed">
+              Aceptamos cambios y devoluciones dentro de los 14 días posteriores a la recepción del pedido, siempre que la prenda conserve sus etiquetas originales y no haya sido utilizada. Puedes gestionarlo en tienda o mediante mensajería.
+            </div>
+          </details>
+        </div>
+      </div>
+
     </div>
   );
 };

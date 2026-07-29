@@ -18,6 +18,13 @@
   .font-serif {
     font-family: var(--font-serif);
   }
+
+  .font-mono-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
 }
 
 /* Metallic Copper & Brand Gradients */
@@ -45,10 +52,10 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #18181b;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #a1a1aa;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {

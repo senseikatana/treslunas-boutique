@@ -44,12 +44,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
           {product.isNew && (
-            <span className="bg-[#FFE185] text-[#1C1B1B] text-[10px] font-extrabold uppercase px-2.5 py-1 rounded tracking-wider shadow-sm">
+            <span className="bg-[#92003a] text-white font-mono-label font-bold px-2 py-0.5 rounded-xs shadow-sm">
               NUEVO
             </span>
           )}
           {product.isBestseller && (
-            <span className="bg-[#92003a] text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded tracking-wider shadow-sm">
+            <span className="bg-[#c37b58] text-white font-mono-label font-bold px-2 py-0.5 rounded-xs shadow-sm">
               FAVORITO ERIKA
             </span>
           )}
@@ -110,11 +110,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         <div className="mt-3 flex items-center justify-between pt-2 border-t border-zinc-800/20">
           <div className="flex items-baseline gap-2">
-            <span className="font-heading font-black text-sm md:text-base text-[#92003a] dark:text-[#EAB393]">
+            <span className="font-mono-label text-sm md:text-base font-bold text-[#92003a] dark:text-[#EAB393]">
               €{product.price.toFixed(2)}
             </span>
             {product.originalPrice && (
-              <span className="text-xs text-zinc-500 line-through">
+              <span className="font-mono-label text-xs text-zinc-500 line-through">
                 €{product.originalPrice.toFixed(2)}
               </span>
             )}

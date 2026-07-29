@@ -1,157 +1,212 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PageView } from '../types';
 import { TripleMoonLogo } from './TripleMoonLogo';
-import { Instagram, MapPin, Phone, Mail, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Instagram, MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 interface FooterProps {
   setCurrentView: (view: PageView) => void;
-  isDarkMode: boolean;
+  isDarkMode?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ setCurrentView, isDarkMode }) => {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubscribed(false), 5000);
-    }
-  };
-
+export const Footer: React.FC<FooterProps> = ({ setCurrentView }) => {
   return (
-    <footer className={`border-t transition-colors ${
-      isDarkMode ? 'bg-[#0a0a0b] border-zinc-800 text-zinc-300' : 'bg-[#f4f1ee] border-zinc-200 text-zinc-700'
-    }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          
-          {/* Col 1: Brand Info */}
-          <div className="space-y-4">
-            <TripleMoonLogo variant={isDarkMode ? 'copper' : 'dark'} textSize="lg" />
-            <p className="text-xs leading-relaxed text-zinc-400 max-w-sm">
-              Nacida en el corazón de Cambrils, 3 Lunas Boutique es un santuario de moda, accesorios y joyería celestial curados con pasión por Erika.
-            </p>
-            <div className="flex items-center space-x-3 pt-2">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full bg-zinc-800/20 hover:bg-[#92003a] hover:text-white transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <span className="text-xs text-zinc-400 font-medium">@3lunasboutique</span>
-            </div>
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 transition-colors">
+      <div className="mx-auto max-w-7xl space-y-8 px-4 py-16 sm:px-6 lg:space-y-16 lg:px-8">
+        <div className="sm:flex sm:items-center sm:justify-between">
+          <div className="text-teal-600 dark:text-teal-300">
+            <TripleMoonLogo variant="copper" textSize="lg" />
           </div>
 
-          {/* Col 2: Navigation Links */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold tracking-widest uppercase text-[#c37b58]">Navegación</h4>
-            <ul className="space-y-2 text-xs font-medium">
+          <ul className="mt-8 flex justify-start gap-6 sm:mt-0 sm:justify-end">
+            <li>
+              <a
+                href="https://instagram.com"
+                rel="noreferrer"
+                target="_blank"
+                className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
+              >
+                <span className="sr-only">Instagram</span>
+                <Instagram className="size-6" />
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://facebook.com"
+                rel="noreferrer"
+                target="_blank"
+                className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
+              >
+                <span className="sr-only">Facebook</span>
+                <svg className="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    fillRule="evenodd"
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="https://whatsapp.com"
+                rel="noreferrer"
+                target="_blank"
+                className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
+              >
+                <span className="sr-only">WhatsApp</span>
+                <Phone className="size-6 text-[#c37b58]" />
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="mailto:hola@3lunasboutique.es"
+                className="text-gray-700 transition hover:opacity-75 dark:text-gray-200"
+              >
+                <span className="sr-only">Email</span>
+                <Mail className="size-6" />
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          className="grid grid-cols-1 gap-8 border-t border-gray-100 pt-8 sm:grid-cols-2 lg:grid-cols-4 lg:pt-16 dark:border-gray-800"
+        >
+          <div>
+            <p className="font-bold uppercase tracking-wider text-xs text-[#c37b58]">Colecciones</p>
+
+            <ul className="mt-6 space-y-4 text-sm">
               <li>
-                <button onClick={() => setCurrentView('home')} className="hover:text-[#c37b58] transition-colors">
-                  Inicio / Novedades
+                <button onClick={() => setCurrentView('collection')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Ver Toda la Colección
                 </button>
               </li>
+
               <li>
-                <button onClick={() => setCurrentView('collection')} className="hover:text-[#c37b58] transition-colors">
-                  Colección Vestidos
+                <button onClick={() => setCurrentView('collection')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Vestidos de Alta Costura
                 </button>
               </li>
+
               <li>
-                <button onClick={() => setCurrentView('about')} className="hover:text-[#c37b58] transition-colors">
-                  La Historia de Erika
+                <button onClick={() => setCurrentView('collection')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Tops & Blusas Exclusivas
                 </button>
               </li>
+
               <li>
-                <button onClick={() => setCurrentView('branding')} className="hover:text-[#c37b58] transition-colors">
-                  Guía de Estilo & Branding
+                <button onClick={() => setCurrentView('collection')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Accesorios & Bolsos
                 </button>
               </li>
+
               <li>
-                <button onClick={() => setCurrentView('contact')} className="hover:text-[#c37b58] transition-colors">
-                  Contacto & Ubicación
+                <button onClick={() => setCurrentView('collection')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Joyería Artesanal
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Tienda Física Cambrils */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold tracking-widest uppercase text-[#c37b58]">Tienda Física</h4>
-            <div className="space-y-2.5 text-xs text-zinc-400">
-              <div className="flex items-start space-x-2">
+          <div>
+            <p className="font-bold uppercase tracking-wider text-xs text-[#c37b58]">3 Lunas Boutique</p>
+
+            <ul className="mt-6 space-y-4 text-sm">
+              <li>
+                <button onClick={() => setCurrentView('home')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Novedades & Tendencias
+                </button>
+              </li>
+
+              <li>
+                <button onClick={() => setCurrentView('about')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Sobre Erika & La Historia
+                </button>
+              </li>
+
+              <li>
+                <button onClick={() => setCurrentView('branding')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Guía de Estilo & Manual
+                </button>
+              </li>
+
+              <li>
+                <button onClick={() => setCurrentView('contact')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Tienda Física en Cambrils
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-bold uppercase tracking-wider text-xs text-[#c37b58]">Atención al Cliente</p>
+
+            <ul className="mt-6 space-y-4 text-sm">
+              <li>
+                <button onClick={() => setCurrentView('contact')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Contacto Directo & WhatsApp
+                </button>
+              </li>
+
+              <li>
+                <button onClick={() => setCurrentView('contact')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Preguntas Frecuentes (FAQ)
+                </button>
+              </li>
+
+              <li>
+                <button onClick={() => setCurrentView('contact')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Recogida Click & Collect 2H
+                </button>
+              </li>
+
+              <li>
+                <button onClick={() => setCurrentView('contact')} className="text-gray-700 transition hover:opacity-75 dark:text-gray-200">
+                  Asesoría de Imagen Privada
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-bold uppercase tracking-wider text-xs text-[#c37b58]">Boutique Cambrils</p>
+
+            <div className="mt-6 space-y-3 text-xs text-gray-600 dark:text-gray-300">
+              <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-[#c37b58] shrink-0 mt-0.5" />
-                <span>Carrer de les Tres Llunes, 12, 43850 Cambrils, Tarragona, España</span>
+                <span>Carrer de les Tres Llunes, 12, 43850 Cambrils, Tarragona</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-[#c37b58] shrink-0" />
-                <span>+34 977 123 456 / WhatsApp +34 600 123 456</span>
-              </div>
-              <div className="flex items-center space-x-2">
+
+              <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#c37b58] shrink-0" />
-                <span>Lunes a Sábado: 10:00 - 14:00 | 17:00 - 20:30</span>
+                <span>Lun - Sáb: 10:00 - 14:00 | 17:00 - 20:30</span>
               </div>
+
+              <p className="pt-2 text-[11px] text-gray-500 dark:text-gray-400">
+                Envíos 24H gratis en la zona de Cambrils, Reus y Tarragona.
+              </p>
             </div>
           </div>
-
-          {/* Col 4: Newsletter */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold tracking-widest uppercase text-[#c37b58]">Únete al Club 3 Lunas</h4>
-            <p className="text-xs text-zinc-400">
-              Recibe invitaciones exclusivas a nuevas colecciones y asesoría personalizada de Erika.
-            </p>
-            <form onSubmit={handleSubscribe} className="space-y-2">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Tu correo electrónico..."
-                  required
-                  className={`w-full px-3 py-2.5 text-xs rounded-md border focus:outline-none focus:ring-1 focus:ring-[#92003a] pr-10 ${
-                    isDarkMode 
-                      ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-500' 
-                      : 'bg-white border-zinc-300 text-zinc-900 placeholder-zinc-400'
-                  }`}
-                />
-                <button
-                  type="submit"
-                  className="absolute right-1 top-1 bottom-1 px-3 bg-[#92003a] hover:bg-[#b21b50] text-white rounded flex items-center justify-center transition-colors"
-                >
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </form>
-
-            {subscribed && (
-              <div className="flex items-center space-x-1.5 text-xs text-emerald-500 font-medium pt-1">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>¡Gracias! Te has unido con éxito.</span>
-              </div>
-            )}
-          </div>
-
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-zinc-800/30 flex flex-col md:flex-row items-center justify-between text-[11px] text-zinc-500 gap-4">
-          <p>© {new Date().getFullYear()} 3 Lunas Boutique Cambrils. Todos los derechos reservados.</p>
-          <div className="flex items-center space-x-6">
-            <button onClick={() => setCurrentView('branding')} className="hover:underline">
-              Diseño & Branding System
-            </button>
-            <span className="text-zinc-700">|</span>
-            <span>Aviso Legal</span>
-            <span className="text-zinc-700">|</span>
-            <span>Política de Privacidad</span>
+        <div className="pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 dark:text-gray-400 gap-4">
+          <p>
+            &copy; {new Date().getFullYear()} 3 Lunas Boutique Cambrils — Erika & Erika. Todos los derechos reservados.
+          </p>
+
+          <div className="flex items-center gap-4">
+            <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('branding'); }} className="hover:underline">Aviso Legal</a>
+            <span>&middot;</span>
+            <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('branding'); }} className="hover:underline">Política de Privacidad</a>
+            <span>&middot;</span>
+            <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('branding'); }} className="hover:underline">Cookies</a>
           </div>
         </div>
       </div>
     </footer>
   );
 };
+

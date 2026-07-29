@@ -123,22 +123,40 @@ export const CartView: React.FC<CartViewProps> = ({
                     </p>
                   </div>
 
-                  {/* Quantity Controls */}
+                  {/* Quantity Controls (HyperUI Buttons Quantity Component) */}
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center border border-zinc-700 rounded overflow-hidden">
-                      <button
-                        onClick={() => onUpdateQuantity(idx, item.quantity - 1)}
-                        className="px-2.5 py-1 text-xs hover:bg-zinc-800"
-                      >
-                        -
-                      </button>
-                      <span className="px-3 text-xs font-bold">{item.quantity}</span>
-                      <button
-                        onClick={() => onUpdateQuantity(idx, item.quantity + 1)}
-                        className="px-2.5 py-1 text-xs hover:bg-zinc-800"
-                      >
-                        +
-                      </button>
+                    <div>
+                      <label htmlFor={`Quantity-cart-${idx}`} className="sr-only">Cantidad</label>
+                      <div className="flex items-center rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                        <button
+                          type="button"
+                          onClick={() => onUpdateQuantity(idx, item.quantity - 1)}
+                          className="size-9 leading-9 text-center text-zinc-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
+                        >
+                          &minus;
+                        </button>
+
+                        <input
+                          type="number"
+                          id={`Quantity-cart-${idx}`}
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value, 10);
+                            if (!isNaN(val) && val >= 1) {
+                              onUpdateQuantity(idx, val);
+                            }
+                          }}
+                          className="h-9 w-12 border-transparent text-center text-xs font-bold text-zinc-900 dark:text-white bg-transparent [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none focus:outline-none"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() => onUpdateQuantity(idx, item.quantity + 1)}
+                          className="size-9 leading-9 text-center text-zinc-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
+                        >
+                          &plus;
+                        </button>
+                      </div>
                     </div>
 
                     <button

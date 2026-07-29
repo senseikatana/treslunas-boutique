@@ -198,20 +198,38 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           {/* Quantity & Actions */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center gap-4">
-              <div className="flex items-center border border-zinc-700 rounded overflow-hidden h-12">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3 py-1 hover:bg-zinc-800 transition-colors"
-                >
-                  -
-                </button>
-                <span className="px-4 text-sm font-bold">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-3 py-1 hover:bg-zinc-800 transition-colors"
-                >
-                  +
-                </button>
+              <div>
+                <label htmlFor="Quantity-detail" className="sr-only">Cantidad</label>
+                <div className="flex items-center rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 h-12">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="size-10 leading-10 text-center text-zinc-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
+                  >
+                    &minus;
+                  </button>
+
+                  <input
+                    type="number"
+                    id="Quantity-detail"
+                    value={quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val) && val >= 1) {
+                        setQuantity(val);
+                      }
+                    }}
+                    className="h-10 w-12 border-transparent text-center text-sm font-bold text-zinc-900 dark:text-white bg-transparent [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none focus:outline-none"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="size-10 leading-10 text-center text-zinc-600 transition hover:opacity-75 dark:text-zinc-300 font-bold"
+                  >
+                    &plus;
+                  </button>
+                </div>
               </div>
 
               <button
@@ -263,43 +281,70 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             </div>
           )}
 
-          {/* Accordion: Size & Care Guide */}
+          {/* HyperUI Accordion: Details, Care, Shipping */}
           <div className="pt-4 border-t border-zinc-800/20 space-y-2">
-            <div className="border border-zinc-800/40 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setOpenAccordion(openAccordion === 'care' ? null : 'care')}
-                className="w-full px-4 py-3 text-left font-bold text-xs uppercase tracking-wider flex justify-between items-center"
-              >
+            <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/60 transition-colors">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-4 py-3 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
                 <span>Guía de Tallas y Cuidados</span>
-                {openAccordion === 'care' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </button>
-              {openAccordion === 'care' && (
-                <div className="px-4 pb-4 text-xs text-zinc-400 space-y-2 border-t border-zinc-800/20 pt-2">
-                  <p>{product.careGuide}</p>
-                  <ul className="list-disc list-inside space-y-1 pt-1">
-                    {product.details.map((d, i) => (
-                      <li key={i}>{d}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+                <svg
+                  aria-hidden="true"
+                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-zinc-500 dark:text-zinc-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="p-4 pt-2 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 border-t border-zinc-100 dark:border-zinc-800/40">
+                <p>{product.careGuide}</p>
+                <ul className="list-disc list-inside space-y-1 pt-1">
+                  {product.details.map((d, i) => (
+                    <li key={i}>{d}</li>
+                  ))}
+                </ul>
+              </div>
+            </details>
 
-            <div className="border border-zinc-800/40 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}
-                className="w-full px-4 py-3 text-left font-bold text-xs uppercase tracking-wider flex justify-between items-center"
-              >
+            <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/60 transition-colors">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-4 py-3 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
                 <span>Envíos & Recogida en Cambrils</span>
-                {openAccordion === 'shipping' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </button>
-              {openAccordion === 'shipping' && (
-                <div className="px-4 pb-4 text-xs text-zinc-400 space-y-2 border-t border-zinc-800/20 pt-2">
-                  <p>• <strong>Click & Collect:</strong> Recogida gratuita en tienda en Cambrils (Carrer de les Tres Llunes, 12).</p>
-                  <p>• <strong>Envío Exprés 24h:</strong> Gratis en pedidos superiores a €50 para Cambrils, Reus, Salou y Tarragona.</p>
-                </div>
-              )}
-            </div>
+                <svg
+                  aria-hidden="true"
+                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-zinc-500 dark:text-zinc-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="p-4 pt-2 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 border-t border-zinc-100 dark:border-zinc-800/40">
+                <p>• <strong>Click & Collect:</strong> Recogida gratuita en tienda en Cambrils (Carrer de les Tres Llunes, 12).</p>
+                <p>• <strong>Envío Exprés 24h:</strong> Gratis en pedidos superiores a €50 para Cambrils, Reus, Salou y Tarragona.</p>
+              </div>
+            </details>
+
+            <details className="group [&_summary::-webkit-details-marker]:hidden border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-900/60 transition-colors">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-4 py-3 font-bold text-xs uppercase tracking-wider text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
+                <span>Garantía de Autenticidad & Devoluciones</span>
+                <svg
+                  aria-hidden="true"
+                  className="size-4 shrink-0 transition-transform duration-300 group-open:-rotate-180 text-zinc-500 dark:text-zinc-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="p-4 pt-2 text-xs text-zinc-600 dark:text-zinc-400 space-y-2 border-t border-zinc-100 dark:border-zinc-800/40">
+                <p>Todas las piezas de Erika & Erika son confeccionadas con tejidos de la más alta calidad. Dispones de 14 días para cambios o devoluciones en tienda física u online.</p>
+              </div>
+            </details>
           </div>
 
         </div>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { PageView, Product, CartItem, Order } from './types';
 import { PRODUCTS } from './data/products';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { SearchModal } from './components/SearchModal';
 import { CartDrawer } from './components/CartDrawer';
-import { BrandGuidePopup } from './components/BrandGuidePopup';
+import { AnnouncementBanner } from './components/AnnouncementBanner';
 
 // Views
 import { HomeView } from './views/HomeView';
@@ -125,6 +126,12 @@ export default function App() {
         </div>
       )}
       
+      {/* Top Announcement Banner */}
+      <AnnouncementBanner
+        setCurrentView={setCurrentView}
+        onSelectCategory={setSelectedCategory}
+      />
+
       {/* Header */}
       <Header
         currentView={currentView}
@@ -142,82 +149,92 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1">
-        {currentView === 'home' && (
-          <HomeView
-            onSelectProduct={handleSelectProduct}
-            onQuickAdd={handleQuickAdd}
-            setCurrentView={setCurrentView}
-            isDarkMode={isDarkMode}
-          />
-        )}
+      <main className="flex-1 overflow-x-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentView}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+            {currentView === 'home' && (
+              <HomeView
+                onSelectProduct={handleSelectProduct}
+                onQuickAdd={handleQuickAdd}
+                setCurrentView={setCurrentView}
+                isDarkMode={isDarkMode}
+              />
+            )}
 
-        {currentView === 'collection' && (
-          <CollectionView
-            onSelectProduct={handleSelectProduct}
-            onQuickAdd={handleQuickAdd}
-            isDarkMode={isDarkMode}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-        )}
+            {currentView === 'collection' && (
+              <CollectionView
+                onSelectProduct={handleSelectProduct}
+                onQuickAdd={handleQuickAdd}
+                isDarkMode={isDarkMode}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+            )}
 
-        {currentView === 'product-detail' && (
-          <ProductDetailView
-            product={selectedProduct}
-            onAddToCart={handleAddToCart}
-            onSelectProduct={handleSelectProduct}
-            setCurrentView={setCurrentView}
-            isDarkMode={isDarkMode}
-          />
-        )}
+            {currentView === 'product-detail' && (
+              <ProductDetailView
+                product={selectedProduct}
+                onAddToCart={handleAddToCart}
+                onSelectProduct={handleSelectProduct}
+                setCurrentView={setCurrentView}
+                isDarkMode={isDarkMode}
+              />
+            )}
 
-        {currentView === 'cart' && (
-          <CartView
-            cartItems={cartItems}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveItem}
-            onClearCart={handleClearCart}
-            setCurrentView={setCurrentView}
-            isDarkMode={isDarkMode}
-          />
-        )}
+            {currentView === 'cart' && (
+              <CartView
+                cartItems={cartItems}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemoveItem={handleRemoveItem}
+                onClearCart={handleClearCart}
+                setCurrentView={setCurrentView}
+                isDarkMode={isDarkMode}
+              />
+            )}
 
-        {currentView === 'checkout' && (
-          <CheckoutView
-            cartItems={cartItems}
-            onCompleteOrder={handleCompleteOrder}
-            setCurrentView={setCurrentView}
-            isDarkMode={isDarkMode}
-          />
-        )}
+            {currentView === 'checkout' && (
+              <CheckoutView
+                cartItems={cartItems}
+                onCompleteOrder={handleCompleteOrder}
+                setCurrentView={setCurrentView}
+                isDarkMode={isDarkMode}
+              />
+            )}
 
-        {currentView === 'order-success' && (
-          <OrderSuccessView
-            order={lastOrder}
-            setCurrentView={setCurrentView}
-            isDarkMode={isDarkMode}
-          />
-        )}
+            {currentView === 'order-success' && (
+              <OrderSuccessView
+                order={lastOrder}
+                setCurrentView={setCurrentView}
+                isDarkMode={isDarkMode}
+              />
+            )}
 
-        {currentView === 'about' && (
-          <AboutView isDarkMode={isDarkMode} />
-        )}
+            {currentView === 'about' && (
+              <AboutView isDarkMode={isDarkMode} />
+            )}
 
-        {currentView === 'branding' && (
-          <BrandingGuideView isDarkMode={isDarkMode} />
-        )}
+            {currentView === 'branding' && (
+              <BrandingGuideView isDarkMode={isDarkMode} />
+            )}
 
-        {currentView === 'contact' && (
-          <ContactView isDarkMode={isDarkMode} />
-        )}
+            {currentView === 'contact' && (
+              <ContactView isDarkMode={isDarkMode} />
+            )}
 
-        {currentView === 'not-found' && (
-          <NotFoundView
-            setCurrentView={setCurrentView}
-            isDarkMode={isDarkMode}
-          />
-        )}
+            {currentView === 'not-found' && (
+              <NotFoundView
+                setCurrentView={setCurrentView}
+                isDarkMode={isDarkMode}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer */}
@@ -245,13 +262,6 @@ export default function App() {
         setCurrentView={setCurrentView}
         isDarkMode={isDarkMode}
       />
-
-      {/* Floating Brand Guide Popup Component */}
-      <BrandGuidePopup
-        setCurrentView={setCurrentView}
-        isDarkMode={isDarkMode}
-      />
-
     </div>
   );
 }

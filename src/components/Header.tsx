@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PageView } from '../types';
 import { TripleMoonLogo } from './TripleMoonLogo';
-import { Search, ShoppingBag, Menu, X, Sun, Moon, MapPin, ChevronDown, Sparkles } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, Sun, Moon, MapPin, ChevronDown, Sparkles, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface HeaderProps {
@@ -68,12 +68,6 @@ export const Header: React.FC<HeaderProps> = ({
         ? 'bg-[#0f0f10]/95 backdrop-blur-md border-zinc-800 text-zinc-100' 
         : 'bg-[#faf8f6]/95 backdrop-blur-md border-zinc-200 text-zinc-900'
     }`}>
-      {/* Announcement Bar */}
-      <div className="bg-gradient-to-r from-[#92003a] via-[#b21b50] to-[#680027] text-white text-xs py-1.5 px-4 text-center tracking-widest font-medium uppercase flex items-center justify-center gap-2">
-        <MapPin className="w-3.5 h-3.5 animate-bounce" />
-        <span>TIENDA FÍSICA EN CAMBRILS | ENVÍO EXPRESS LOCAL EN 24H (TARRAGONA, REUS, SALOU)</span>
-      </div>
-
       {/* Main Header Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
@@ -223,12 +217,12 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </nav>
 
-          {/* Right Icon Actions */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          {/* Right Icon Actions (Desktop View) */}
+          <div className="hidden lg:flex items-center space-x-3 sm:space-x-4">
             {/* Search Button */}
             <button
               onClick={onOpenSearch}
-              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors"
+              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors text-zinc-800 dark:text-zinc-200"
               title="Buscar en la boutique"
             >
               <Search className="w-5 h-5" />
@@ -240,13 +234,17 @@ export const Header: React.FC<HeaderProps> = ({
               className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors text-amber-500"
               title={isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
             >
-              {isDarkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-zinc-700" />}
+              {isDarkMode ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-zinc-800" />}
             </button>
 
             {/* Shopping Bag Button */}
             <button
               onClick={onOpenCart}
-              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors relative"
+              style={{
+                paddingLeft: '8px',
+                marginLeft: '-12px',
+              }}
+              className="p-2 rounded-full hover:bg-zinc-500/10 transition-colors relative text-zinc-800 dark:text-zinc-200"
               title="Ver Carrito de Compras"
             >
               <ShoppingBag className="w-5 h-5" />
@@ -272,10 +270,108 @@ export const Header: React.FC<HeaderProps> = ({
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className={`lg:hidden border-t overflow-hidden ${
-              isDarkMode ? 'bg-[#141416] border-zinc-800' : 'bg-[#f5f2ef] border-zinc-200'
+              isDarkMode ? 'bg-[#141416] border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900 shadow-xl'
             }`}
           >
-            <div className="px-6 py-6 space-y-3">
+            <div className="px-6 py-6 space-y-4">
+              
+              {/* Consolidated Mobile Actions: Cart, Account, Search & Theme */}
+              <div className="pb-4 border-b border-zinc-200 dark:border-zinc-800 space-y-3">
+                <span className="text-[10px] uppercase font-mono-label tracking-widest text-[#92003a] dark:text-[#c37b58] font-bold block">
+                  Mi Carrito & Cuenta
+                </span>
+
+                <div className="space-y-2">
+                  {/* Cart Action Button */}
+                  <button
+                    onClick={() => {
+                      onOpenCart();
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${
+                      isDarkMode
+                        ? 'bg-zinc-900 border-zinc-800 text-zinc-100 hover:border-zinc-700'
+                        : 'bg-zinc-50 border-zinc-200 text-zinc-900 hover:bg-zinc-100 shadow-sm'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-[#92003a]/10 text-[#92003a] dark:text-[#c37b58]">
+                        <ShoppingBag className="w-5 h-5" />
+                      </div>
+                      <div className="text-left">
+                        <span className="text-xs font-bold block">Carrito de Compras</span>
+                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                          {cartCount === 0 ? 'Sin artículos en la bolsa' : `${cartCount} producto${cartCount > 1 ? 's' : ''} añadido${cartCount > 1 ? 's' : ''}`}
+                        </span>
+                      </div>
+                    </div>
+                    {cartCount > 0 ? (
+                      <span className="bg-[#92003a] text-white text-xs font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                        {cartCount}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono-label uppercase text-zinc-400">Ver</span>
+                    )}
+                  </button>
+
+                  {/* Account Action Button */}
+                  <button
+                    onClick={() => handleNavClick('checkout')}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${
+                      isDarkMode
+                        ? 'bg-zinc-900 border-zinc-800 text-zinc-100 hover:border-zinc-700'
+                        : 'bg-zinc-50 border-zinc-200 text-zinc-900 hover:bg-zinc-100 shadow-sm'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                        <User className="w-5 h-5" />
+                      </div>
+                      <div className="text-left">
+                        <span className="text-xs font-bold block">Mi Cuenta & Checkout</span>
+                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">Gestiona tus pedidos y pagos</span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono-label uppercase text-zinc-400">Ir</span>
+                  </button>
+
+                  {/* Quick Utility Actions Row (Search & Theme) */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      onClick={() => {
+                        onOpenSearch();
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border transition-all ${
+                        isDarkMode
+                          ? 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:border-zinc-700'
+                          : 'bg-zinc-50 border-zinc-200 text-zinc-800 hover:bg-zinc-100'
+                      }`}
+                    >
+                      <Search className="w-4 h-4 text-[#c37b58]" />
+                      <span className="text-xs font-bold">Buscar</span>
+                    </button>
+
+                    <button
+                      onClick={() => setIsDarkMode(!isDarkMode)}
+                      className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border transition-all ${
+                        isDarkMode
+                          ? 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:border-zinc-700'
+                          : 'bg-zinc-50 border-zinc-200 text-zinc-800 hover:bg-zinc-100'
+                      }`}
+                    >
+                      {isDarkMode ? (
+                        <Sun className="w-4 h-4 text-amber-400" />
+                      ) : (
+                        <Moon className="w-4 h-4 text-zinc-800" />
+                      )}
+                      <span className="text-xs font-bold">
+                        {isDarkMode ? 'Modo Claro' : 'Modo Oscuro'}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
               {/* Novedades */}
               <button
                 onClick={() => handleNavClick('home')}

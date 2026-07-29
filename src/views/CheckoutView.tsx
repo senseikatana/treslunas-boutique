@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CartItem, ShippingDetails, PaymentMethod, Order, PageView } from '../types';
-import { ShieldCheck, CheckCircle2, CreditCard, Lock } from 'lucide-react';
-import { motion } from 'motion/react';
+import { StripeEmbeddedPayment } from '../components/StripeEmbeddedPayment';
+import { ShieldCheck, Lock, Truck, ShoppingBag } from 'lucide-react';
 
 interface CheckoutViewProps {
   cartItems: CartItem[];
@@ -30,80 +30,98 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
     deliveryOption: 'local'
   });
 
-  const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>('bizum');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.fullName || !formData.address || !formData.email) return;
+  const handleStripeSuccess = (paymentId: string, methodDetails: string) => {
+    if (!formData.fullName || !formData.address || !formData.email) {
+      setFormError('Por favor, rellenar los datos de envío antes de confirmar el pago.');
+      return;
+    }
 
-    setIsProcessing(true);
-    setTimeout(() => {
-      const newOrder: Order = {
-        id: `3L-${Math.floor(100000 + Math.random() * 900000)}`,
-        items: cartItems,
-        shipping: formData,
-        paymentMethod: selectedPayment,
-        subtotal,
-        shippingCost,
-        total,
-        createdAt: new Date().toLocaleDateString('es-ES'),
-        status: 'Confirmado'
-      };
-      onCompleteOrder(newOrder);
-      setIsProcessing(false);
-    }, 1500);
+    const newOrder: Order = {
+      id: `3L-STRIPE-${Math.floor(100000 + Math.random() * 900000)}`,
+      items: cartItems,
+      shipping: formData,
+      paymentMethod: 'card',
+      subtotal,
+      shippingCost,
+      total,
+      createdAt: new Date().toLocaleDateString('es-ES'),
+      status: 'Confirmado'
+    };
+    onCompleteOrder(newOrder);
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
-      {/* Title matching screenshot #2 */}
+      {/* Title */}
       <div className="text-center space-y-2">
-        <h1 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl tracking-wider">
+        <span className="font-mono-label text-[#92003a] dark:text-[#c37b58] font-bold">
+          Checkout Seguro
+        </span>
+        <h1 className="font-serif text-3xl sm:text-4xl font-normal text-zinc-900 dark:text-white">
           3 Lunas Payment & Checkout
         </h1>
-        <p className="text-xs text-zinc-400">Finaliza tu pedido de forma rápida y 100% segura</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Finaliza tu pedido sin salir de la web con pasarela integrada Stripe
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      {formError && (
+        <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs text-center font-bold">
+          ⚠️ {formError}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Column: Shipping & Billing Details matching screenshot #2 */}
-        <div className={`p-6 md:p-8 rounded-2xl border space-y-6 ${
+        {/* Left Column: Shipping & Billing Details */}
+        <div className={`lg:col-span-6 p-6 sm:p-8 rounded-2xl border space-y-6 ${
           isDarkMode ? 'bg-[#141416] border-zinc-800' : 'bg-white border-zinc-200'
         }`}>
-          <h2 className="font-serif font-bold text-xl text-[#92003a] dark:text-[#F62477]">
-            Shipping & Billing Details
-          </h2>
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            <h2 className="font-serif font-bold text-xl text-[#92003a] dark:text-[#c37b58]">
+              Datos de Envío y Facturación
+            </h2>
+            <Truck className="w-5 h-5 text-[#c37b58]" />
+          </div>
 
           <div className="space-y-4 text-xs">
             <div>
-              <label className="block text-zinc-400 font-bold mb-1">Full Name</label>
+              <label className="block text-zinc-500 dark:text-zinc-400 font-bold mb-1">Nombre Completo *</label>
               <input
                 type="text"
                 required
                 value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                placeholder="Full Name"
+                onChange={(e) => {
+                  setFormData({ ...formData, fullName: e.target.value });
+                  setFormError(null);
+                }}
+                placeholder="Nombre y Apellidos"
                 className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
                   isDarkMode 
-                    ? 'bg-zinc-900 border-[#dfbec3]/40 text-white focus:border-[#F62477]' 
+                    ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#92003a]' 
                     : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
                 }`}
               />
             </div>
 
             <div>
-              <label className="block text-zinc-400 font-bold mb-1">Address</label>
+              <label className="block text-zinc-500 dark:text-zinc-400 font-bold mb-1">Dirección de Entrega *</label>
               <input
                 type="text"
                 required
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Address"
+                onChange={(e) => {
+                  setFormData({ ...formData, address: e.target.value });
+                  setFormError(null);
+                }}
+                placeholder="Calle, número, piso"
                 className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
                   isDarkMode 
-                    ? 'bg-zinc-900 border-[#dfbec3]/40 text-white focus:border-[#F62477]' 
+                    ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#92003a]' 
                     : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
                 }`}
               />
@@ -111,183 +129,132 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-zinc-400 font-bold mb-1">City</label>
+                <label className="block text-zinc-500 dark:text-zinc-400 font-bold mb-1">Población / Ciudad *</label>
                 <input
                   type="text"
                   required
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  placeholder="City (e.g. Cambrils, Tarragona)"
+                  placeholder="Cambrils, Reus, Tarragona..."
                   className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
                     isDarkMode 
-                      ? 'bg-zinc-900 border-[#dfbec3]/40 text-white focus:border-[#F62477]' 
+                      ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#92003a]' 
                       : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
                   }`}
                 />
               </div>
 
               <div>
-                <label className="block text-zinc-400 font-bold mb-1">Postal Code</label>
+                <label className="block text-zinc-500 dark:text-zinc-400 font-bold mb-1">Código Postal</label>
                 <input
                   type="text"
-                  required
                   value={formData.postalCode}
                   onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
-                  placeholder="Postal Code"
+                  placeholder="43850"
                   className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
                     isDarkMode 
-                      ? 'bg-zinc-900 border-[#dfbec3]/40 text-white focus:border-[#F62477]' 
+                      ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#92003a]' 
                       : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
                   }`}
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-zinc-400 font-bold mb-1">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="Email address for order receipt"
-                className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
-                  isDarkMode 
-                    ? 'bg-zinc-900 border-[#dfbec3]/40 text-white focus:border-[#F62477]' 
-                    : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
-                }`}
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-zinc-500 dark:text-zinc-400 font-bold mb-1">Email Confirmación *</label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    setFormError(null);
+                  }}
+                  placeholder="email@ejemplo.com"
+                  className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
+                    isDarkMode 
+                      ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#92003a]' 
+                      : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-zinc-500 dark:text-zinc-400 font-bold mb-1">Teléfono Móvil</label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+34 600 000 000"
+                  className={`w-full px-4 py-3 rounded-lg border outline-none transition-all ${
+                    isDarkMode 
+                      ? 'bg-zinc-900 border-zinc-700 text-white focus:border-[#92003a]' 
+                      : 'bg-zinc-50 border-zinc-300 text-zinc-900 focus:border-[#92003a]'
+                  }`}
+                />
+              </div>
             </div>
           </div>
+
+          {/* Resumen Carrito */}
+          <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-2 text-xs">
+            <span className="font-mono-label text-zinc-500 font-bold block mb-2">Resumen de la Cesta ({cartItems.length} artículos)</span>
+            <div className="max-h-40 overflow-y-auto space-y-2 pr-2">
+              {cartItems.map((item) => (
+                <div key={item.product.id} className="flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <img src={item.product.image} alt={item.product.name} className="w-9 h-9 object-cover rounded" />
+                    <span className="truncate text-zinc-700 dark:text-zinc-300">{item.product.name} (x{item.quantity})</span>
+                  </div>
+                  <span className="font-mono font-bold shrink-0">€{(item.product.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-zinc-200 dark:border-zinc-800 pt-3 space-y-1">
+              <div className="flex justify-between text-zinc-500">
+                <span>Subtotal:</span>
+                <span className="font-mono">€{subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-zinc-500">
+                <span>Envío (Express Cambrils / Tarragona):</span>
+                <span className="font-mono">{shippingCost === 0 ? 'GRATIS' : `€${shippingCost.toFixed(2)}`}</span>
+              </div>
+              <div className="flex justify-between font-bold text-sm text-zinc-900 dark:text-white pt-1">
+                <span>Total Pedido:</span>
+                <span className="font-mono text-[#92003a] dark:text-[#c37b58]">€{total.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        {/* Right Column: Payment Methods matching screenshot #2 */}
-        <div className={`p-6 md:p-8 rounded-2xl border space-y-6 ${
+        {/* Right Column: Embedded Stripe Gateway */}
+        <div className={`lg:col-span-6 p-6 sm:p-8 rounded-2xl border space-y-5 ${
           isDarkMode ? 'bg-[#141416] border-zinc-800' : 'bg-white border-zinc-200'
         }`}>
-          <h2 className="font-serif font-bold text-xl text-[#92003a] dark:text-[#F62477]">
-            Payment Methods
-          </h2>
-
-          <div className="grid grid-cols-2 gap-3">
-            {/* Credit/Debit Card */}
-            <button
-              type="button"
-              onClick={() => setSelectedPayment('card')}
-              className={`p-4 rounded-xl border text-xs font-bold flex items-center gap-3 transition-all ${
-                selectedPayment === 'card'
-                  ? 'border-[#F62477] bg-[#F62477]/10 text-white ring-2 ring-[#F62477]'
-                  : 'border-zinc-700 hover:border-zinc-500'
-              }`}
-            >
-              <CreditCard className="w-5 h-5 text-amber-500" />
-              <span>Credit/Debit Card</span>
-            </button>
-
-            {/* PayPal */}
-            <button
-              type="button"
-              onClick={() => setSelectedPayment('paypal')}
-              className={`p-4 rounded-xl border text-xs font-bold flex items-center gap-3 transition-all ${
-                selectedPayment === 'paypal'
-                  ? 'border-[#F62477] bg-[#F62477]/10 text-white ring-2 ring-[#F62477]'
-                  : 'border-zinc-700 hover:border-zinc-500'
-              }`}
-            >
-              <span className="text-blue-400 font-black text-sm">P</span>
-              <span>PayPal</span>
-            </button>
-
-            {/* Bizum Copper Metallic Badge matching screenshot #2 */}
-            <button
-              type="button"
-              onClick={() => setSelectedPayment('bizum')}
-              className={`p-4 rounded-xl text-xs font-black flex items-center gap-3 transition-all bg-copper-metallic text-zinc-900 shadow-md ${
-                selectedPayment === 'bizum' ? 'ring-2 ring-white scale-102' : 'opacity-90 hover:opacity-100'
-              }`}
-            >
-              <span className="text-base font-extrabold">%</span>
-              <span>Bizum</span>
-            </button>
-
-            {/* Apple Pay */}
-            <button
-              type="button"
-              onClick={() => setSelectedPayment('apple_pay')}
-              className={`p-4 rounded-xl border text-xs font-bold flex items-center gap-3 transition-all ${
-                selectedPayment === 'apple_pay'
-                  ? 'border-[#F62477] bg-[#F62477]/10 text-white ring-2 ring-[#F62477]'
-                  : 'border-zinc-700 hover:border-zinc-500'
-              }`}
-            >
-              <span> Pay</span>
-              <span>Apple Pay</span>
-            </button>
-
-            {/* Google Pay */}
-            <button
-              type="button"
-              onClick={() => setSelectedPayment('google_pay')}
-              className={`p-4 rounded-xl border text-xs font-bold flex items-center gap-3 transition-all ${
-                selectedPayment === 'google_pay'
-                  ? 'border-[#F62477] bg-[#F62477]/10 text-white ring-2 ring-[#F62477]'
-                  : 'border-zinc-700 hover:border-zinc-500'
-              }`}
-            >
-              <span className="text-amber-500 font-bold">G</span>
-              <span>Google Pay</span>
-            </button>
-
-            {/* Klarna */}
-            <button
-              type="button"
-              onClick={() => setSelectedPayment('klarna')}
-              className={`p-4 rounded-xl border text-xs font-bold flex items-center gap-3 transition-all ${
-                selectedPayment === 'klarna'
-                  ? 'border-[#F62477] bg-[#F62477]/10 text-white ring-2 ring-[#F62477]'
-                  : 'border-zinc-700 hover:border-zinc-500'
-              }`}
-            >
-              <span className="font-serif font-black text-rose-300">K.</span>
-              <span>Klarna - Buy Now, Pay Later</span>
-            </button>
-          </div>
-
-          {/* Safe Checkout Pill matching screenshot #2 */}
-          <div className="flex justify-center pt-2">
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#FFE185] text-[#1C1B1B] text-xs font-black shadow-md">
-              <ShieldCheck className="w-4 h-4 text-[#1C1B1B]" />
-              <span>Safe Checkout</span>
+          <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+            <h2 className="font-serif font-bold text-xl text-[#92003a] dark:text-[#c37b58]">
+              Pasarela de Pago Integrada
+            </h2>
+            <div className="flex items-center gap-1 bg-[#92003a]/10 px-2.5 py-1 rounded-full border border-[#92003a]/20">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#92003a] dark:text-[#c37b58]" />
+              <span className="font-mono-label text-[10px] text-[#92003a] dark:text-[#c37b58] font-bold">Stripe Payments</span>
             </div>
           </div>
 
-          {/* Order Summary Line */}
-          <div className="pt-4 border-t border-zinc-800/40 space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-zinc-400">Total a Pagar:</span>
-              <span className="font-heading font-black text-lg text-copper-metallic">€{total.toFixed(2)}</span>
-            </div>
-          </div>
-
-          {/* PAGAR AHORA metallic berry button matching screenshot #2 */}
-          <button
-            type="submit"
-            disabled={isProcessing}
-            className="w-full py-4 rounded-xl bg-berry-metallic text-white font-black text-sm uppercase tracking-widest shadow-2xl hover:opacity-95 transition-opacity flex items-center justify-center gap-2"
-          >
-            {isProcessing ? (
-              <span className="animate-pulse">PROCESANDO PAGO SEGURO...</span>
-            ) : (
-              <>
-                <Lock className="w-4 h-4" />
-                <span>PAGAR AHORA (€{total.toFixed(2)})</span>
-              </>
-            )}
-          </button>
-
+          <StripeEmbeddedPayment
+            total={total}
+            isDarkMode={isDarkMode}
+            onPaymentSuccess={handleStripeSuccess}
+            isProcessing={isProcessing}
+            setIsProcessing={setIsProcessing}
+          />
         </div>
 
-      </form>
+      </div>
     </div>
   );
 };
+

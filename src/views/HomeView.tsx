@@ -3,7 +3,7 @@ import { Product, PageView } from '../types';
 import { useAllProducts } from '../hooks/useProductsQuery';
 import { ProductCard } from '../components/ProductCard';
 import { TripleMoonLogo } from '../components/TripleMoonLogo';
-import { ArrowRight, ShoppingBag, Sparkles, MapPin, Truck, Award, MessageCircle, Loader2 } from 'lucide-react';
+import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface HomeViewProps {
@@ -19,141 +19,138 @@ export const HomeView: React.FC<HomeViewProps> = ({
   setCurrentView,
   isDarkMode
 }) => {
-  const { data: products = [], isLoading } = useAllProducts();
-  const newProducts = products.filter(p => p.isNew || p.isBestseller).slice(0, 6);
-
+  const { data: products = [] } = useAllProducts();
+  const newProducts = products.filter(p => p.isNew || p.isBestseller).slice(0, 4);
 
   return (
-    <div className="space-y-16 pb-20">
+    <div className="space-y-0 pb-16">
       
-      {/* HERO SECTION matching screenshot #11 & #12 */}
-      <section className={`relative overflow-hidden border-b ${
-        isDarkMode ? 'bg-[#0a0a0b] border-zinc-800' : 'bg-[#f7f5f2] border-zinc-200'
+      {/* TAILWIND UI OFFICIAL HERO SECTION WITH BRAND GRADIENTS */}
+      <section className={`relative isolate overflow-hidden border-b transition-colors ${
+        isDarkMode ? 'bg-[#0a0a0b] border-zinc-800' : 'bg-[#F8F7F4] border-zinc-200'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            {/* Left Column Text Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-7 space-y-6"
-            >
-              {/* Location pill */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#92003a]/10 border border-[#92003a]/20 text-[#c37b58] text-xs font-bold uppercase tracking-wider">
-                <MapPin className="w-3.5 h-3.5" />
-                <span>TIENDA FÍSICA EN CAMBRILS</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="font-heading font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase tracking-tight leading-[1.1]">
-                MODA CON CARÁCTER <br />
-                <span className="text-copper-metallic">SELECCIONADA PARA TI.</span>
-              </h1>
-
-              <p className="text-zinc-400 text-sm md:text-base max-w-xl leading-relaxed">
-                Encuentra prendas de vestir y accesorios curados por Erika para expresar tu mejor versión. Visítanos en Cambrils o compra online con envío local express.
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <button
-                  onClick={() => setCurrentView('collection')}
-                  className="px-8 py-3.5 rounded bg-gradient-to-r from-[#92003a] to-[#b21b50] text-white font-black text-xs uppercase tracking-widest hover:opacity-95 transition-all shadow-xl shadow-[#92003a]/20 flex items-center gap-2"
-                >
-                  <span>VER COLECCIÓN</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <button
-                  onClick={() => setCurrentView('about')}
-                  className="px-6 py-3.5 rounded border border-[#c37b58]/60 text-[#c37b58] font-bold text-xs uppercase tracking-wider hover:bg-[#c37b58]/10 transition-colors flex items-center gap-2"
-                >
-                  <span>ASESORÍA DE ERIKA</span>
-                  <Sparkles className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Right Column High Fashion Hero Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-5 relative"
-            >
-              <div className="relative aspect-[4/5] rounded-xl overflow-hidden shadow-2xl border border-zinc-800">
-                <img
-                  src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1000&q=80"
-                  alt="3 Lunas Boutique Cambrils Fashion"
-                  className="w-full h-full object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                
-                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-white space-y-1">
-                  <div className="text-[10px] uppercase font-bold tracking-widest text-[#EAB393]">
-                    Colección Primavera - Verano
-                  </div>
-                  <p className="font-serif font-bold text-base">Elegancia Natural & Estilo Celestial</p>
-                </div>
-              </div>
-            </motion.div>
-
-          </div>
+        {/* Top ambient blur glow */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 pointer-events-none"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            }}
+            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#92003a] via-[#b21b50] to-[#c37b58] opacity-25 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+          />
         </div>
 
-        {/* Value Props Bar matching screenshot #11 */}
-        <div className={`border-t py-6 ${
-          isDarkMode ? 'bg-[#141416] border-zinc-800' : 'bg-white border-zinc-200'
-        }`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <div className="flex items-center gap-4 p-3 rounded-lg">
-              <div className="p-3 rounded-full bg-[#92003a]/10 text-[#c37b58]">
-                <ShoppingBag className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider">Click & Collect en Cambrils</h4>
-                <p className="text-xs text-zinc-400">Compra online y recoge hoy mismo en nuestra tienda física.</p>
-              </div>
+        <div className="mx-auto max-w-4xl py-16 sm:py-24 lg:py-28 px-6">
+          
+          {/* Badge Pill Announcement */}
+          <div className="mb-8 flex justify-center">
+            <div className="relative rounded-full px-4 py-1.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 ring-1 ring-zinc-900/10 dark:ring-white/15 hover:ring-zinc-900/20 dark:hover:ring-white/25 transition-all flex items-center gap-2 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md shadow-xs">
+              <span className="font-mono-label font-bold text-[#92003a] dark:text-[#c37b58]">Boutique Cambrils</span>
+              <span className="text-zinc-300 dark:text-zinc-700">|</span>
+              <span>Nueva Colección de Erika</span>
+              <button 
+                onClick={() => setCurrentView('collection')}
+                className="font-semibold text-[#92003a] dark:text-[#c37b58] flex items-center gap-1 hover:underline ml-1"
+              >
+                <span aria-hidden="true" className="absolute inset-0" />
+                Ver Novedades <ArrowRight className="w-3.5 h-3.5 inline" />
+              </button>
             </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-lg">
-              <div className="p-3 rounded-full bg-[#92003a]/10 text-[#c37b58]">
-                <Award className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider">La Selección de Erika</h4>
-                <p className="text-xs text-zinc-400">Prendas curadas y asesoría de estilo personalizada.</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-3 rounded-lg">
-              <div className="p-3 rounded-full bg-[#92003a]/10 text-[#c37b58]">
-                <Truck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider">Envío Local en 24h</h4>
-                <p className="text-xs text-zinc-400">Envíos exprés a Cambrils, Reus, Salou y Tarragona.</p>
-              </div>
-            </div>
-
           </div>
+
+          {/* Centered Main Hero Headline */}
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-6xl font-serif tracking-tight text-zinc-900 dark:text-white font-normal leading-[1.08]">
+              MODA CON CARÁCTER Y <br />
+              <i className="font-serif italic text-[#92003a] dark:text-copper-metallic font-semibold">ELEGANCIA CELESTIAL</i>
+            </h1>
+
+            <p className="mt-6 text-base sm:text-lg font-medium text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed">
+              Prendas de vestir, joyería artesanal y accesorios exclusivos curados personalmente por Erika. Visita nuestra boutique en Cambrils o explora la tienda online.
+            </p>
+
+            <div className="mt-8 flex items-center justify-center gap-x-4 sm:gap-x-6">
+              <button
+                onClick={() => setCurrentView('collection')}
+                className="rounded-md bg-[#92003a] hover:bg-[#72002d] px-6 py-3.5 text-xs font-mono-label font-bold text-white shadow-md transition-all flex items-center gap-2"
+              >
+                <span>VER COLECCIÓN</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+
+              <button
+                onClick={() => setCurrentView('about')}
+                className="text-xs font-mono-label font-bold text-zinc-900 dark:text-white hover:text-[#92003a] dark:hover:text-[#c37b58] transition-colors flex items-center gap-1 py-3.5"
+              >
+                <span>ASESORÍA DE ERIKA</span>
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom ambient blur glow */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)] pointer-events-none"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            }}
+            className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#92003a] via-[#c37b58] to-[#FFE185] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+          />
         </div>
       </section>
 
-      {/* NOVEDADES CATALOG SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-2">
-          <span className="text-xs font-black uppercase tracking-[0.3em] text-[#c37b58]">CATÁLOGO</span>
-          <h2 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl uppercase tracking-tight">
-            DESCUBRE LAS NOVEDADES
-          </h2>
-          <div className="w-16 h-0.5 bg-gradient-to-r from-[#c37b58] to-[#92003a] mx-auto mt-2" />
+      {/* FEATURES STRIP */}
+      <section className={`border-b ${
+        isDarkMode ? 'bg-[#121214] border-zinc-800' : 'bg-[#EAE9E6] border-zinc-200'
+      }`}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-zinc-200 dark:divide-zinc-800 text-center">
+          
+          <div className="p-6">
+            <span className="font-mono-label text-[#92003a] dark:text-[#c37b58] font-bold">Click & Collect</span>
+            <p className="text-xs text-zinc-700 dark:text-zinc-300 font-medium mt-1">Compra online y recoge hoy mismo en Cambrils.</p>
+          </div>
+
+          <div className="p-6">
+            <span className="font-mono-label text-[#92003a] dark:text-[#c37b58] font-bold">La Selección de Erika</span>
+            <p className="text-xs text-zinc-700 dark:text-zinc-300 font-medium mt-1">Asesoría de estilo personalizada e individual.</p>
+          </div>
+
+          <div className="p-6">
+            <span className="font-mono-label text-[#92003a] dark:text-[#c37b58] font-bold">Envío 24h</span>
+            <p className="text-xs text-zinc-700 dark:text-zinc-300 font-medium mt-1">Express a Cambrils, Reus, Salou y Tarragona.</p>
+          </div>
+
+        </div>
+      </section>
+
+      {/* CATALOG / NOVEDADES SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 gap-4">
+          <div>
+            <span className="font-mono-label text-[#92003a] dark:text-[#c37b58] font-bold">Catálogo</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-zinc-900 dark:text-white mt-1">
+              DESCUBRE LAS NOVEDADES
+            </h2>
+          </div>
+
+          <button
+            onClick={() => setCurrentView('collection')}
+            className="px-4 py-2 border border-zinc-900 dark:border-zinc-300 text-zinc-900 dark:text-zinc-100 font-mono-label text-[10px] font-bold uppercase hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          >
+            VER TODO
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {newProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -164,29 +161,22 @@ export const HomeView: React.FC<HomeViewProps> = ({
             />
           ))}
         </div>
-
-        <div className="text-center pt-6">
-          <button
-            onClick={() => setCurrentView('collection')}
-            className="px-8 py-3 rounded border border-zinc-700 hover:border-[#c37b58] font-bold text-xs uppercase tracking-widest hover:text-[#c37b58] transition-colors"
-          >
-            Ver Todas las Piezas
-          </button>
-        </div>
       </section>
 
-      {/* BRAND STORY & WHATSAPP ADVISORY BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`rounded-2xl p-8 md:p-12 border relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 ${
-          isDarkMode ? 'bg-gradient-to-br from-[#18181c] to-[#0f0f10] border-zinc-800' : 'bg-gradient-to-br from-zinc-100 to-white border-zinc-200'
+      {/* WHATSAPP ADVISORY BANNER */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className={`p-8 sm:p-12 border flex flex-col md:flex-row items-center justify-between gap-6 ${
+          isDarkMode 
+            ? 'bg-zinc-900/80 border-zinc-800 text-white' 
+            : 'bg-[#EAE9E6] border-zinc-300 text-zinc-900'
         }`}>
-          <div className="space-y-4 max-w-xl">
+          <div className="space-y-2 text-center md:text-left">
             <TripleMoonLogo variant={isDarkMode ? 'copper' : 'dark'} textSize="sm" />
-            <h3 className="font-serif text-2xl md:text-3xl font-bold">
-              ¿Dudas sobre tu talla o cómo combinar tu look?
+            <h3 className="font-serif text-2xl sm:text-3xl font-normal mt-2">
+              ¿Dudas sobre tu talla o tejido?
             </h3>
-            <p className="text-xs md:text-sm text-zinc-400 leading-relaxed">
-              Erika te asesora directamente por WhatsApp para asegurarte la elección perfecta para cada ocasión.
+            <p className="text-xs sm:text-sm opacity-80 max-w-lg">
+              Erika te asesora directamente por WhatsApp con fotos y medidas reales de la tienda.
             </p>
           </div>
 
@@ -194,10 +184,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
             href="https://wa.me/34600123456?text=Hola%20Erika,%20me%20gustaria%20asesoramiento%20sobre%203%20Lunas%20Boutique"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-3 shadow-xl shrink-0 transition-colors"
+            className="px-6 py-3.5 bg-[#25D366] hover:bg-[#1eb956] text-white font-mono-label font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shrink-0 transition-colors rounded-sm"
           >
-            <MessageCircle className="w-5 h-5" />
-            <span>Consultar por WhatsApp</span>
+            <MessageCircle className="w-4 h-4" />
+            <span>CONSULTAR POR WHATSAPP</span>
           </a>
         </div>
       </section>
@@ -205,3 +195,4 @@ export const HomeView: React.FC<HomeViewProps> = ({
     </div>
   );
 };
+
